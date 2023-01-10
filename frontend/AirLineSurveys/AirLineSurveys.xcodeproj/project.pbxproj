@@ -7,18 +7,34 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		605AAAA6296D61D50053F107 /* AuthenticationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605AAAA5296D61D50053F107 /* AuthenticationManager.swift */; };
+		605AAAA8296D64960053F107 /* VoterLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605AAAA7296D64960053F107 /* VoterLoginView.swift */; };
+		605AAAAC296D6D2D0053F107 /* VotersSurveysInGlance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605AAAAB296D6D2D0053F107 /* VotersSurveysInGlance.swift */; };
+		605AAAAE296D6DEE0053F107 /* SurveyGlanceRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 605AAAAD296D6DEE0053F107 /* SurveyGlanceRow.swift */; };
 		60A00194296D54020072F3AE /* AirLineSurveysApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A00193296D54020072F3AE /* AirLineSurveysApp.swift */; };
 		60A00196296D54020072F3AE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A00195296D54020072F3AE /* ContentView.swift */; };
 		60A00198296D54030072F3AE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60A00197296D54030072F3AE /* Assets.xcassets */; };
 		60A0019B296D54030072F3AE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 60A0019A296D54030072F3AE /* Preview Assets.xcassets */; };
+		60A001A2296D54E00072F3AE /* ManagerLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60A001A1296D54E00072F3AE /* ManagerLoginView.swift */; };
+		60AFCCAF296D870500B97C68 /* SurveyInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AFCCAE296D870500B97C68 /* SurveyInfo.swift */; };
+		60AFCCB1296D920000B97C68 /* SurveyList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AFCCB0296D920000B97C68 /* SurveyList.swift */; };
+		60AFCCB3296D9CE300B97C68 /* SurveyDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60AFCCB2296D9CE300B97C68 /* SurveyDetails.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		605AAAA5296D61D50053F107 /* AuthenticationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationManager.swift; sourceTree = "<group>"; };
+		605AAAA7296D64960053F107 /* VoterLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoterLoginView.swift; sourceTree = "<group>"; };
+		605AAAAB296D6D2D0053F107 /* VotersSurveysInGlance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VotersSurveysInGlance.swift; sourceTree = "<group>"; };
+		605AAAAD296D6DEE0053F107 /* SurveyGlanceRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyGlanceRow.swift; sourceTree = "<group>"; };
 		60A00190296D54020072F3AE /* AirLineSurveys.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AirLineSurveys.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		60A00193296D54020072F3AE /* AirLineSurveysApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirLineSurveysApp.swift; sourceTree = "<group>"; };
 		60A00195296D54020072F3AE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		60A00197296D54030072F3AE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		60A0019A296D54030072F3AE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		60A001A1296D54E00072F3AE /* ManagerLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagerLoginView.swift; sourceTree = "<group>"; };
+		60AFCCAE296D870500B97C68 /* SurveyInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyInfo.swift; sourceTree = "<group>"; };
+		60AFCCB0296D920000B97C68 /* SurveyList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyList.swift; sourceTree = "<group>"; };
+		60AFCCB2296D9CE300B97C68 /* SurveyDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SurveyDetails.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +48,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		605AAAA9296D6C9E0053F107 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				60A001A1296D54E00072F3AE /* ManagerLoginView.swift */,
+				605AAAA7296D64960053F107 /* VoterLoginView.swift */,
+				605AAAAB296D6D2D0053F107 /* VotersSurveysInGlance.swift */,
+				605AAAAD296D6DEE0053F107 /* SurveyGlanceRow.swift */,
+				60AFCCB0296D920000B97C68 /* SurveyList.swift */,
+				60AFCCB2296D9CE300B97C68 /* SurveyDetails.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		605AAAAA296D6CAA0053F107 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				605AAAA5296D61D50053F107 /* AuthenticationManager.swift */,
+				60AFCCAE296D870500B97C68 /* SurveyInfo.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		60A00187296D54020072F3AE = {
 			isa = PBXGroup;
 			children = (
@@ -51,6 +89,8 @@
 		60A00192296D54020072F3AE /* AirLineSurveys */ = {
 			isa = PBXGroup;
 			children = (
+				605AAAAA296D6CAA0053F107 /* Model */,
+				605AAAA9296D6C9E0053F107 /* View */,
 				60A00193296D54020072F3AE /* AirLineSurveysApp.swift */,
 				60A00195296D54020072F3AE /* ContentView.swift */,
 				60A00197296D54030072F3AE /* Assets.xcassets */,
@@ -137,7 +177,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				605AAAAE296D6DEE0053F107 /* SurveyGlanceRow.swift in Sources */,
+				605AAAA8296D64960053F107 /* VoterLoginView.swift in Sources */,
+				605AAAAC296D6D2D0053F107 /* VotersSurveysInGlance.swift in Sources */,
+				60AFCCB1296D920000B97C68 /* SurveyList.swift in Sources */,
+				60A001A2296D54E00072F3AE /* ManagerLoginView.swift in Sources */,
+				605AAAA6296D61D50053F107 /* AuthenticationManager.swift in Sources */,
+				60AFCCAF296D870500B97C68 /* SurveyInfo.swift in Sources */,
 				60A00196296D54020072F3AE /* ContentView.swift in Sources */,
+				60AFCCB3296D9CE300B97C68 /* SurveyDetails.swift in Sources */,
 				60A00194296D54020072F3AE /* AirLineSurveysApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,14 +8,51 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var showManagerLogin = false
+    @State private var showPassengerLogin = false
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        NavigationView {
+            ZStack {
+                Color.pink
+                    .ignoresSafeArea()
+                Circle()
+                    .scale(1.7)
+                    .foregroundColor(.white.opacity(0.15))
+                Circle()
+                    .scale(1.35)
+                    .foregroundColor(.white)
+                
+                VStack {
+                    Text ("Welcome to Airline Surveys\' System")
+                        .font(.largeTitle)
+                        .padding()
+                    
+                    NavigationLink(destination: ManagerLoginView(), isActive: $showManagerLogin) {
+                        Button("I'm a manager") {
+                            showManagerLogin = true
+                        }
+                        .foregroundColor(.white)
+                        .frame(width: 320, height: 50)
+                        .background(.blue)
+                        .cornerRadius(10)
+                        .padding(.top)
+                    }
+
+                    NavigationLink(destination: VoterLoginView(), isActive: $showPassengerLogin) {
+                        Button("I'm a Passenger") {
+                            showPassengerLogin = true
+                        }
+                            .foregroundColor(.white)
+                            .frame(width: 320, height: 50)
+                            .background(.red)
+                            .cornerRadius(10)
+                        .padding(.bottom)
+                    }
+                }
+            }
         }
-        .padding()
+        .accentColor(.white)
     }
 }
 
