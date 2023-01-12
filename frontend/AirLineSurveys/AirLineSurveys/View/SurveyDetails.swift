@@ -8,8 +8,20 @@
 import SwiftUI
 
 struct SurveyDetails: View {
+    @StateObject var questions: Question = Question(id: 1, questionNumber: 1, questionText: "SALAM")
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationView {
+            ScrollView {
+                ZStack {
+                    Color.green
+                    VStack {
+                        Text("Hello")
+                    }
+                }
+                .frame(height: 30)
+            }
+        }
     }
 }
 

@@ -10,17 +10,27 @@ import SwiftUI
 struct ContentView: View {
     @State private var showManagerLogin = false
     @State private var showPassengerLogin = false
+    @State private var scaleRadOuter : CGFloat = 1.7
     
     var body: some View {
+        let scaleRadInner : CGFloat = 1.35
+        
         NavigationView {
             ZStack {
                 Color.pink
                     .ignoresSafeArea()
+                
                 Circle()
-                    .scale(1.7)
-                    .foregroundColor(.white.opacity(0.15))
+                    .scale(scaleRadOuter)
+                    .foregroundColor(.white.opacity(0.2))
+                    .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: scaleRadOuter)
+                    .onAppear {
+                        scaleRadOuter = 1.7
+                        scaleRadOuter += 0.1
+                    }
+                
                 Circle()
-                    .scale(1.35)
+                    .scale(scaleRadInner)
                     .foregroundColor(.white)
                 
                 VStack {

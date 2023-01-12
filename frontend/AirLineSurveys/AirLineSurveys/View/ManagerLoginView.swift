@@ -12,22 +12,33 @@ struct ManagerLoginView: View {
     @State private var password = ""
     @State private var goToNextView = false
     @State private var wrongCredentials = false
+    @State private var scaleRadOuter : CGFloat = 1.7
 
     
     
     var body: some View {
+        let scaleRadInner : CGFloat = 1.35
+        
         var authManager = AuthManager(isManager: true, username: username, password: password)
         
             ZStack {
+                
                 Color.blue
                     .ignoresSafeArea()
                 
                 Circle()
-                    .scale(1.7)
-                    .foregroundColor(.white.opacity(0.15))
+                    .scale(scaleRadOuter)
+                    .foregroundColor(.white.opacity(0.2))
+                    .animation(.easeInOut(duration: 3).repeatForever(autoreverses: true), value: scaleRadOuter)
+                    .onAppear {
+                        scaleRadOuter = 1.7
+                        scaleRadOuter += 0.1
+                    }
+
                 Circle()
-                    .scale(1.35)
+                    .scale(scaleRadInner)
                     .foregroundColor(.white)
+
                 
                 VStack {
                     Text("Login For Managers:")
