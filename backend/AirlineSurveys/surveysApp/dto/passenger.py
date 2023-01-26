@@ -8,7 +8,7 @@ class TicketInfo:
 
 class PassengerInfo:
     def __init__(self, request_data):
-        if request_data.get('voter_type') not in [None, 'Business', 'Economy']:
+        if request_data.get('voter_type') not in [None, 'All', 'Business', 'Economy']:
             raise Exception("Invalid voter type")
         self.voter_type = request_data.get('voter_type')
         self.first_name = request_data.get('first_name')
