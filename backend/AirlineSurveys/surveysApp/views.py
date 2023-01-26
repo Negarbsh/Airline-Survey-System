@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from . import service
-from .dto.ticket_info import TicketInfo
+from .dto.passenger import TicketInfo, PassengerInfo
 
 
 def index(request):
@@ -13,24 +13,25 @@ def index(request):
 
 @csrf_exempt
 def passenger(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        try:
-            ticket_info = TicketInfo(
-                ticket_number=data['ticket_number'],
-                flight_number=data['flight_number'],
-                seat_number=data['seat_number'],
-                price=data['price']
-            )
-            service.add_passenger(
-                ticket_info,
-                data["first_name"],
-                data["last_name"],
-                data["passport_number"],
-                data["gender"],
-                data["voter_type"]
-            )
+    data = json.loads(request.body)
+    try:
+        if request.method == "POST":
+            service.add_passenger(TicketInfo(data), PassengerInfo(data))
             return HttpResponse("Voter added", status=201)
-        except Exception as e:
-            return HttpResponse("Error occurred: " + str(e), status=500)
-    return HttpResponse("Method not allowed", status=405)
+
+        elif request.method == "DELETE":
+            service.delete_passenger(data.get('voter_id'))
+            return HttpResponse("Voter deleted", status=200)
+
+        elif request.method == "PUT":
+            service.update_passenger(
+                voter_id=data.get('voter_id'),
+                ticket_info=TicketInfo(data),
+                passenger_info=PassengerInfo(data)
+            )
+            return HttpResponse("Voter updated", status=200)
+
+        return HttpResponse("Method not allowed", status=405)
+
+    except Exception as e:
+        return HttpResponse("Error occurred: " + str(e), status=500)

@@ -41,7 +41,7 @@ class Flight(models.Model):
 class Ticket(models.Model):
     ticketnumber = models.AutoField(primary_key=True)
     seatnumber = models.CharField(max_length=150)
-    flightnumber = models.ForeignKey(Flight, models.DO_NOTHING, db_column='flightnumber', to_field='flightnumber')
+    flightnumber = models.ForeignKey(Flight, models.CASCADE, db_column='flightnumber', to_field='flightnumber')
     firstname = models.CharField(max_length=150, blank=True, null=True)
     lastname = models.CharField(max_length=150, blank=True, null=True)
     passportnumber = models.CharField(max_length=150, blank=True, null=True)
@@ -55,8 +55,8 @@ class Ticket(models.Model):
 
 class Voter(models.Model):
     userid = models.AutoField(primary_key=True)
-    ticketnumber = models.ForeignKey(Ticket, models.DO_NOTHING, db_column='ticketnumber', to_field='ticketnumber')
-    flightnumber = models.ForeignKey(Flight, models.DO_NOTHING, db_column='flightnumber', to_field='flightnumber')
+    ticketnumber = models.ForeignKey(Ticket, models.CASCADE, db_column='ticketnumber', to_field='ticketnumber')
+    flightnumber = models.ForeignKey(Flight, models.CASCADE, db_column='flightnumber', to_field='flightnumber')
     type = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     class Meta:
