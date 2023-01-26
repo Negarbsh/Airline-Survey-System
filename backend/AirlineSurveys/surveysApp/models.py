@@ -8,9 +8,19 @@
 from django.db import models
 
 
+class Manager(models.Model):
+    userid = models.AutoField(primary_key=True)
+    username = models.CharField(unique=True, max_length=150)
+    password = models.CharField(max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'manager'
+
+
 class Airline(models.Model):
     airlineid = models.AutoField(primary_key=True)
-    managerid = models.ForeignKey('Manager', models.DO_NOTHING, db_column='managerid')
+    managerid = models.ForeignKey(to=Manager, to_field='userid', on_delete=models.DO_NOTHING, db_column='managerid')
     airlinename = models.CharField(max_length=150, blank=True, null=True)
 
     class Meta:
@@ -18,9 +28,94 @@ class Airline(models.Model):
         db_table = 'airline'
 
 
+class Flight(models.Model):
+    flightnumber = models.AutoField(primary_key=True)
+    airlineid = models.ForeignKey(to=Airline, to_field='airlineid', on_delete=models.DO_NOTHING, db_column='airlineid')
+    flightdate = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'flight'
+
+
+class Ticket(models.Model):
+    ticketnumber = models.AutoField(primary_key=True)
+    seatnumber = models.CharField(max_length=150)
+    flightnumber = models.ForeignKey(Flight, models.DO_NOTHING, db_column='flightnumber', to_field='flightnumber')
+    firstname = models.CharField(max_length=150, blank=True, null=True)
+    lastname = models.CharField(max_length=150, blank=True, null=True)
+    passportnumber = models.CharField(max_length=150, blank=True, null=True)
+    gender = models.TextField(blank=True, null=True)  # This field type is a guess.
+    price = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = 'ticket'
+
+
+class Voter(models.Model):
+    userid = models.AutoField(primary_key=True)
+    ticketnumber = models.ForeignKey(Ticket, models.DO_NOTHING, db_column='ticketnumber', to_field='ticketnumber')
+    flightnumber = models.ForeignKey(Flight, models.DO_NOTHING, db_column='flightnumber', to_field='flightnumber')
+    type = models.TextField(blank=True, null=True)  # This field type is a guess.
+
+    class Meta:
+        managed = False
+        db_table = 'voter'
+        unique_together = (('ticketnumber', 'flightnumber'),)
+
+
+class Survey(models.Model):
+    surveyid = models.AutoField(primary_key=True)
+    activationinterval = models.DateTimeField()
+    isactive = models.BooleanField()
+    airlineid = models.ForeignKey(Airline, models.DO_NOTHING, db_column='airlineid', to_field='airlineid')
+
+    class Meta:
+        managed = False
+        db_table = 'survey'
+
+
+class Takesurvey(models.Model):
+    voterid = models.OneToOneField(Voter, models.DO_NOTHING, db_column='voterid', primary_key=True, to_field='userid')
+    surveyid = models.ForeignKey(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    starttime = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'takesurvey'
+        unique_together = (('voterid', 'surveyid'),)
+
+
+class Question(models.Model):
+    surveyid = models.OneToOneField(Survey, models.DO_NOTHING, db_column='surveyid', primary_key=True,
+                                    to_field='surveyid')
+    questionnumber = models.IntegerField()
+    questiontext = models.CharField(max_length=150)
+    isobligatory = models.BooleanField()
+    respondertype = models.TextField(blank=True, null=True)  # This field type is a guess.
+
+    class Meta:
+        managed = False
+        db_table = 'question'
+        unique_together = (('surveyid', 'questionnumber'),)
+
+
+class Descriptivequestion(models.Model):
+    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', primary_key=True,
+                                    to_field='surveyid')
+    questionnumber = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'descriptivequestion'
+        unique_together = (('surveyid', 'questionnumber'),)
+
+
 class Answers(models.Model):
-    voterid = models.OneToOneField('Takesurvey', models.DO_NOTHING, db_column='voterid', primary_key=True)
-    surveyid = models.ForeignKey('Descriptivequestion', models.DO_NOTHING, db_column='surveyid')
+    voterid = models.OneToOneField(Takesurvey, models.DO_NOTHING, db_column='voterid', primary_key=True,
+                                   to_field='voterid')
+    surveyid = models.ForeignKey(Descriptivequestion, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     answertext = models.CharField(max_length=150)
 
@@ -31,14 +126,76 @@ class Answers(models.Model):
 
 
 class Assistancy(models.Model):
-    mainmanagerid = models.OneToOneField('Manager', models.DO_NOTHING, db_column='mainmanagerid', primary_key=True)
-    assistantmanagerid = models.ForeignKey('Manager', models.DO_NOTHING, db_column='assistantmanagerid', related_name='+')
-    surveyid = models.ForeignKey('Survey', models.DO_NOTHING, db_column='surveyid')
+    mainmanagerid = models.OneToOneField(Manager, models.DO_NOTHING, db_column='mainmanagerid', primary_key=True,
+                                         to_field='userid')
+    assistantmanagerid = models.ForeignKey(Manager, models.DO_NOTHING, db_column='assistantmanagerid', related_name='+',
+                                           to_field='userid')
+    surveyid = models.ForeignKey(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
 
     class Meta:
         managed = False
         db_table = 'assistancy'
         unique_together = (('mainmanagerid', 'assistantmanagerid', 'surveyid'),)
+
+
+class Supervisor(models.Model):
+    userid = models.AutoField(primary_key=True)
+    username = models.CharField(unique=True, max_length=150)
+    password = models.CharField(max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'supervisor'
+
+
+class CheckQuestion(models.Model):
+    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', primary_key=True,
+                                    to_field='surveyid')
+    questionnumber = models.IntegerField()
+    supervisorid = models.ForeignKey(Supervisor, models.DO_NOTHING, db_column='supervisorid', to_field='userid')
+    result = models.TextField(blank=True, null=True)  # This field type is a guess.
+
+    class Meta:
+        managed = False
+        db_table = 'check_question'
+        unique_together = (('surveyid', 'questionnumber', 'supervisorid'),)
+
+
+class Multichoicequestion(models.Model):
+    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', primary_key=True,
+                                    to_field='surveyid')
+    questionnumber = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'multichoicequestion'
+        unique_together = (('surveyid', 'questionnumber'),)
+
+
+class Choice(models.Model):
+    surveyid = models.OneToOneField(Multichoicequestion, models.DO_NOTHING, db_column='surveyid', primary_key=True,
+                                    to_field='surveyid')
+    questionnumber = models.IntegerField()
+    choicenumber = models.IntegerField()
+    choicetext = models.CharField(max_length=150)
+
+    class Meta:
+        managed = False
+        db_table = 'choice'
+        unique_together = (('surveyid', 'questionnumber', 'choicenumber'),)
+
+
+class Chooses(models.Model):
+    voterid = models.OneToOneField(Takesurvey, models.DO_NOTHING, db_column='voterid', primary_key=True,
+                                   to_field='voterid')
+    surveyid = models.ForeignKey(Choice, models.DO_NOTHING, db_column='surveyid')
+    questionnumber = models.IntegerField()
+    choicenumber = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'chooses'
+        unique_together = (('voterid', 'surveyid', 'questionnumber', 'choicenumber'),)
 
 
 class AuthGroup(models.Model):
@@ -110,52 +267,6 @@ class AuthUserUserPermissions(models.Model):
         unique_together = (('user', 'permission'),)
 
 
-class CheckQuestion(models.Model):
-    surveyid = models.OneToOneField('Question', models.DO_NOTHING, db_column='surveyid', primary_key=True)
-    questionnumber = models.IntegerField()
-    supervisorid = models.ForeignKey('Supervisor', models.DO_NOTHING, db_column='supervisorid')
-    result = models.TextField(blank=True, null=True)  # This field type is a guess.
-
-    class Meta:
-        managed = False
-        db_table = 'check_question'
-        unique_together = (('surveyid', 'questionnumber', 'supervisorid'),)
-
-
-class Choice(models.Model):
-    surveyid = models.OneToOneField('Multichoicequestion', models.DO_NOTHING, db_column='surveyid', primary_key=True)
-    questionnumber = models.IntegerField()
-    choicenumber = models.IntegerField()
-    choicetext = models.CharField(max_length=150)
-
-    class Meta:
-        managed = False
-        db_table = 'choice'
-        unique_together = (('surveyid', 'questionnumber', 'choicenumber'),)
-
-
-class Chooses(models.Model):
-    voterid = models.OneToOneField('Takesurvey', models.DO_NOTHING, db_column='voterid', primary_key=True)
-    surveyid = models.ForeignKey(Choice, models.DO_NOTHING, db_column='surveyid')
-    questionnumber = models.IntegerField()
-    choicenumber = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'chooses'
-        unique_together = (('voterid', 'surveyid', 'questionnumber', 'choicenumber'),)
-
-
-class Descriptivequestion(models.Model):
-    surveyid = models.OneToOneField('Question', models.DO_NOTHING, db_column='surveyid', primary_key=True)
-    questionnumber = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'descriptivequestion'
-        unique_together = (('surveyid', 'questionnumber'),)
-
-
 class DjangoAdminLog(models.Model):
     action_time = models.DateTimeField()
     object_id = models.TextField(blank=True, null=True)
@@ -199,105 +310,3 @@ class DjangoSession(models.Model):
     class Meta:
         managed = False
         db_table = 'django_session'
-
-
-class Flight(models.Model):
-    flightnumber = models.AutoField(primary_key=True)
-    airlineid = models.ForeignKey(Airline, models.DO_NOTHING, db_column='airlineid')
-    flightdate = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'flight'
-
-
-class Manager(models.Model):
-    userid = models.AutoField(primary_key=True)
-    username = models.CharField(unique=True, max_length=150)
-    password = models.CharField(max_length=150)
-
-    class Meta:
-        managed = False
-        db_table = 'manager'
-
-
-class Multichoicequestion(models.Model):
-    surveyid = models.OneToOneField('Question', models.DO_NOTHING, db_column='surveyid', primary_key=True)
-    questionnumber = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'multichoicequestion'
-        unique_together = (('surveyid', 'questionnumber'),)
-
-
-class Question(models.Model):
-    surveyid = models.OneToOneField('Survey', models.DO_NOTHING, db_column='surveyid', primary_key=True)
-    questionnumber = models.IntegerField()
-    questiontext = models.CharField(max_length=150)
-    isobligatory = models.BooleanField()
-    respondertype = models.TextField(blank=True, null=True)  # This field type is a guess.
-
-    class Meta:
-        managed = False
-        db_table = 'question'
-        unique_together = (('surveyid', 'questionnumber'),)
-
-
-class Supervisor(models.Model):
-    userid = models.AutoField(primary_key=True)
-    username = models.CharField(unique=True, max_length=150)
-    password = models.CharField(max_length=150)
-
-    class Meta:
-        managed = False
-        db_table = 'supervisor'
-
-
-class Survey(models.Model):
-    surveyid = models.AutoField(primary_key=True)
-    activationinterval = models.DateTimeField()
-    isactive = models.BooleanField()
-    airlineid = models.ForeignKey(Airline, models.DO_NOTHING, db_column='airlineid')
-
-    class Meta:
-        managed = False
-        db_table = 'survey'
-
-
-class Takesurvey(models.Model):
-    voterid = models.OneToOneField('Voter', models.DO_NOTHING, db_column='voterid', primary_key=True)
-    surveyid = models.ForeignKey(Survey, models.DO_NOTHING, db_column='surveyid')
-    starttime = models.DateTimeField()
-
-    class Meta:
-        managed = False
-        db_table = 'takesurvey'
-        unique_together = (('voterid', 'surveyid'),)
-
-
-class Ticket(models.Model):
-    ticketnumber = models.AutoField(primary_key=True)
-    seatnumber = models.CharField(max_length=150)
-    flightnumber = models.ForeignKey(Flight, models.DO_NOTHING, db_column='flightnumber')
-    firstname = models.CharField(max_length=150, blank=True, null=True)
-    lastname = models.CharField(max_length=150, blank=True, null=True)
-    passportnumber = models.CharField(max_length=150, blank=True, null=True)
-    gender = models.TextField(blank=True, null=True)  # This field type is a guess.
-    price = models.FloatField()
-
-    class Meta:
-        managed = False
-        db_table = 'ticket'
-
-
-class Voter(models.Model):
-    userid = models.AutoField(primary_key=True)
-    ticketnumber = models.ForeignKey(Ticket, models.DO_NOTHING, db_column='ticketnumber')
-    flightnumber = models.ForeignKey(Flight, models.DO_NOTHING, db_column='flightnumber')
-    type = models.TextField(blank=True, null=True)  # This field type is a guess.
-
-    class Meta:
-        managed = False
-        db_table = 'voter'
-        unique_together = (('ticketnumber', 'flightnumber'),)
