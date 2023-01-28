@@ -1,4 +1,4 @@
-from .repositories import voter_repository, ticket_repository, flight_repository
+from .repositories import voter_repository, ticket_repository, flight_repository, survey_repository
 from .util.decorators import log_error
 
 
@@ -49,3 +49,27 @@ def update_passenger(voter_id, ticket_info, passenger_info):
 
     ticket_repository.save(ticket)
     voter_repository.save(voter)
+
+
+@log_error
+def get_question(survey_id, question_number):
+    return survey_repository.get_question(survey_id, question_number)
+
+
+@log_error
+def get_survey_info(survey_id, airline_id):
+    survey = survey_repository.get_survey(survey_id)
+    if survey.airline_id != airline_id:
+        return None
+    questions = survey_repository.get_questions_by_survey_id(survey_id)
+    return {
+        'survey_id': survey.id,
+        'activation_interval': survey.activation_interval,
+        'is_active': survey.is_active,
+        'questions': questions
+    }
+
+
+@log_error
+def get_surveys(airline_id):
+    return survey_repository.find_by_airline_id(airline_id)
