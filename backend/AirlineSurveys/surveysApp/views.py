@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
 
+from datetime import datetime
 
 def index(request):
     return HttpResponse("Hi there :)")
@@ -35,6 +36,18 @@ def passenger(request):
 
     except Exception as e:
         return HttpResponse("Error occurred: " + str(e), status=500)
+        
+@csrf_exempt
+def take_survey(request) :
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    data = json.loads(request.body)
+    try : 
+        if request.method == "POST" :
+           service.insert_takesurvey(data.get('survey_id'), data.get('voter_id')  , current_time )
+           return HttpResponse("Take survey added", status=201)
+    except Exception as e : 
+        return HttpResponse("Error occurred: " + str(e), status=500)     
 
 
 def survey(request, sid, aid):

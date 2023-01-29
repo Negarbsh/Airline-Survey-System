@@ -1,5 +1,15 @@
-from ..models import Survey, Question, Multichoicequestion, Choice , Chooses ,Answers
+from ..models import Survey, Question, Multichoicequestion, Choice , Chooses ,Answers , Takesurvey
 from ..util.decorators import log_error
+
+
+
+@log_error
+def insert_takesurvey(survey_id ,user_id , starttime)  :
+    takesurvey = Takesurvey(
+    voterid =   user_id, 
+    surveyid = survey_id ,
+    starttime = starttime )
+    takesurvey.save()
 
 
 @log_error
@@ -21,6 +31,8 @@ def get_question(survey_id, question_number):
         "question_number": question.questionnumber,
         "choices": choices
     }
+
+
 @log_error
 def get_answers_by_questionnum( survey_id , question_number ) :
     Answers = []
@@ -29,7 +41,7 @@ def get_answers_by_questionnum( survey_id , question_number ) :
     try : 
         answers_by_number = Answers.objects.filter(surveyid=survey_id ,questionnumber =  question_number)
         for ans in answers_by_number  : 
-          Answers.append( {  "question_nummber" : question_number  ,"question_text"  : question.questiontext  , "answer" :  ans.answertext } )
+          Answers.append( {  "is_descriptive"  : True , "question_nummber" : question_number  ,"question_text"  : question.questiontext  , "answer" :  ans.answertext } )
     except Exception as e : 
         Chooses_by_number =  Chooses.objects.filter ( surveyid=survey_id ,questionnumber =  question_number)  
         choices = []
@@ -40,7 +52,7 @@ def get_answers_by_questionnum( survey_id , question_number ) :
                 'choice_text': choice.choicetext
             }) 
         for ans in Chooses_by_number :  
-            Answers.append( {  "question_nummber" : question_number  ,"question_text"  : question.questiontext  , "choices" :  choices , "answer" : ans.choicenumber } )
+            Answers.append( {   "is_descriptive"  : False , "question_nummber" : question_number  ,"question_text"  : question.questiontext  , "choices" :  choices , "answer" : ans.choicenumber } )
 
     return  Answers         
 
@@ -79,3 +91,4 @@ def get_survey(survey_id):
 @log_error
 def find_by_airline_id(airline_id):
     return Survey.objects.filter(airlineid=airline_id)
+

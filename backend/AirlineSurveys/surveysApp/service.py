@@ -77,3 +77,7 @@ def get_answers_by_questionnum( survey_id , question_number ) :
 def get_surveys(airline_id):
     return survey_repository.find_by_airline_id(airline_id)
 
+@log_error
+def insert_takesurvey(survey_id ,user_id , starttime) :
+    survey_repository.insert_takesurvey(survey_id ,user_id , starttime)
+
