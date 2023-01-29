@@ -69,7 +69,11 @@ def get_survey_info(survey_id, airline_id):
         'questions': questions
     }
 
+@log_error
+def get_answers_by_questionnum( survey_id , question_number ) :
+    return survey_repository.get_answers_by_questionnum(survey_id , question_number )
 
 @log_error
 def get_surveys(airline_id):
     return survey_repository.find_by_airline_id(airline_id)
+

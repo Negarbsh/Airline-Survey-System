@@ -62,3 +62,10 @@ def get_question(request, sid, qnum):
     return HttpResponse("Method not allowed", status=405)
 
 
+def get_answers_by_number(request , sid , qnum) : 
+    if request.method == "GET":
+        answer = service.get_answers_by_questionnum( sid ,qnum)
+        if answer is None : 
+            return HttpResponse("Question not found", status=404)
+        return HttpResponse(json.dumps(answer), status=200)
+    return HttpResponse("Method not allowed", status=405)

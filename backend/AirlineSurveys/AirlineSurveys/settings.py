@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'AirlineSurveys.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Airline-NPS',
+        'NAME': 'postgres',
         'USER': 'postgres',
         'HOST': 'localhost',
-        'PASSWORD': 'postgres',
+        'PASSWORD': 'parnianrzvp',
     }
 }
 

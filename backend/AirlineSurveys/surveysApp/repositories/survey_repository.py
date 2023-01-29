@@ -1,4 +1,4 @@
-from ..models import Survey, Question, Multichoicequestion, Choice
+from ..models import Survey, Question, Multichoicequestion, Choice , Chooses ,Answers
 from ..util.decorators import log_error
 
 
@@ -21,6 +21,30 @@ def get_question(survey_id, question_number):
         "question_number": question.questionnumber,
         "choices": choices
     }
+@log_error
+def get_answers_by_questionnum( survey_id , question_number ) :
+    Answers = []
+    question = Question.objects.get(surveyid=survey_id, questionnumber= question_number)
+
+    try : 
+        answers_by_number = Answers.objects.filter(surveyid=survey_id ,questionnumber =  question_number)
+        for ans in answers_by_number  : 
+          Answers.append( {  "question_nummber" : question_number  ,"question_text"  : question.questiontext  , "answer" :  ans.answertext } )
+    except Exception as e : 
+        Chooses_by_number =  Chooses.objects.filter ( surveyid=survey_id ,questionnumber =  question_number)  
+        choices = []
+        question_choices = Choice.objects.filter(survey_id=survey_id, question_number=question_number)
+        for choice in question_choices:
+            choices.append({
+                'choice_number': choice.choicenumber,
+                'choice_text': choice.choicetext
+            }) 
+        for ans in Chooses_by_number :  
+            Answers.append( {  "question_nummber" : question_number  ,"question_text"  : question.questiontext  , "choices" :  choices , "answer" : ans.choicenumber } )
+
+    return  Answers         
+
+
 
 
 @log_error
