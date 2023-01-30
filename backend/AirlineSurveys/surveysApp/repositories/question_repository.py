@@ -1,5 +1,5 @@
-from backend.AirlineSurveys.surveysApp.models import Multichoicequestion, Choice, Question, Descriptivequestion
-from backend.AirlineSurveys.surveysApp.util.decorators import log_error
+from ..models import Multichoicequestion, Choice, Question, Descriptivequestion
+from ..util.decorators import log_error
 
 
 @log_error
