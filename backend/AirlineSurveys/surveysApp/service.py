@@ -86,7 +86,7 @@ def add_survey(survey_info):
     is_active = check_active(survey_info.activation_interval)
     airline_id = survey_info.airline_id
     airline = airline_repository.find_by_id(airline_id)
-    survey_repository.insert(
+    return survey_repository.insert(
         activation_interval=survey_info.activation_interval,
         is_active=is_active,
         airline=airline
