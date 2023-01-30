@@ -11,3 +11,10 @@ class QuestionInfo:
         self.is_obligatory = is_obligatory
         self.responder_type = responder_type
         self.choices = choices
+
+    def __init__(self, request_data, choices):
+        self.question_number = request_data.get('question_number')
+        self.question_text = request_data.get('question_text')
+        self.is_obligatory = request_data.get('is_obligatory')
+        self.responder_type = request_data.get('responder_type')
+        self.choices = choices

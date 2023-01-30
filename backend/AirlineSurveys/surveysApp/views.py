@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
-from .dto.survey import SurveyInfo
+from .dto.survey import SurveyInfo, QuestionInfo
 from .models import Manager, Voter
 
 
@@ -63,7 +63,7 @@ def login(request):
     if request.method == "POST":
         data = json.loads(request.body)
 
-        if (data.get('username')):
+        if data.get('username'):
             response = service.authenticate_manager(
                 data.get('username'), data.get('password'))
             if response is None:
@@ -94,5 +94,27 @@ def survey(request, sid):
             ))
             return HttpResponse({"survey_id": survey_id}, status=201)
         return HttpResponse("Method not allowed", status=405)
+    except Exception as e:
+        return HttpResponse("Error occurred: " + str(e), status=500)
+
+
+def question(request, surveyid, qnumber):
+    data = json.loads(request.body)
+    try:
+        if request.method == "POST":
+            choices = []
+            data_choices = data.get('choices')
+            for choice in data_choices:
+                choices.append(
+                    {
+                        'choice_number': choice.get('choice_number'),
+                        'choice_text': choice.get('choice_text')
+                    }
+                )
+            question_info = QuestionInfo(data, choices)
+            service.add_question(surveyid, qnumber, question_info)
+            return HttpResponse("Question is added successfully :)", status=201)
+        return HttpResponse("Method not allowed", status=405)
+
     except Exception as e:
         return HttpResponse("Error occurred: " + str(e), status=500)
