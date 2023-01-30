@@ -15,7 +15,9 @@ def add_passenger(ticket_info, passenger_info):
         gender=passenger_info.gender,
         price=ticket_info.price
     )
+
     ticket = ticket_repository.find_by_ticket_number(ticket_info.ticket_number)
+    
     voter_repository.insert(
         ticket=ticket,
         flight=flight,

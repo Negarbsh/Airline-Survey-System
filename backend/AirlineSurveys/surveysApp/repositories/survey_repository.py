@@ -1,22 +1,26 @@
-from ..models import Survey, Question, Multichoicequestion, Choice , Chooses ,Answers , Takesurvey
+from ..models import Survey, Question, Multichoicequestion, Choice , Chooses ,Answers , Takesurvey , Voter  , Descriptivequestion
 from ..util.decorators import log_error
 
 
 
 @log_error
 def insert_takesurvey(survey_id ,user_id , start_time)  :
+    survey =  Survey.objects.get( surveyid = survey_id )
+    voter =  Voter.objects.get ( userid = user_id)
     takesurvey = Takesurvey(
-    voterid =   user_id, 
-    surveyid = survey_id ,
+    voterid = voter , 
+    surveyid = survey ,
     starttime = start_time )
     takesurvey.save()
 
 
 @log_error
-def insert_answers_text( voter_id , survey_id ,question_number , ans ) : 
+def insert_answers_text( voter_id , survey_id ,question_number , ans ) :
+    survey =   Descriptivequestion.objects.get( surveyid = survey_id , questionnumber  = question_number )
+    voter =  Takesurvey.objects.get ( voterid = voter_id) 
     answer = Answers( 
-    voterid =  voter_id, 
-    surveyid  = survey_id,
+    voterid =  voter, 
+    surveyid  = survey,
     questionnumber  = question_number,
     answertext = ans 
     )
@@ -26,9 +30,13 @@ def insert_answers_text( voter_id , survey_id ,question_number , ans ) :
 
 @log_error
 def insert_choice_answer( voter_id ,  survey_id , question_number  , choice) : 
+    survey =   Multichoicequestion.objects.get( surveyid = survey_id , questionnumber  = question_number )
+    choicesid =  Choice.objects.get ( surveyid =survey , questionnumber  = question_number  , choicenumber  = choice  )
+    
+    voter =  Takesurvey.objects.get ( voterid = voter_id )  
     choice_answer = Chooses( 
-    voterid =  voter_id, 
-    surveyid  = survey_id , 
+    voterid =  voter, 
+    surveyid  = choicesid , 
     questionnumber  = question_number ,
     choicenumber = choice 
     )
