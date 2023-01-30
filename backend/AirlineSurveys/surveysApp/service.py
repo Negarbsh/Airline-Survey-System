@@ -1,5 +1,15 @@
-from .repositories import voter_repository, ticket_repository, flight_repository, survey_repository, airline_repository
+from .repositories import voter_repository, ticket_repository, flight_repository, survey_repository, airline_repository, authentication_repository
 from .util.decorators import log_error
+
+
+@log_error
+def authenticate_manager(username, password):
+    return authentication_repository.authenticate_manager(username, password)
+
+
+@log_error
+def authenticate_voter(ticket_number, flight_number):
+    return authentication_repository.authenticate_voter(ticket_number, flight_number)
 
 
 @log_error

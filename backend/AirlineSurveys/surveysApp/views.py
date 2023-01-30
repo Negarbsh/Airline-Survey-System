@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
+from .models import Manager, Voter
 
 
 def index(request):
@@ -47,6 +48,27 @@ def get_manager_surveys(request, manager_id):
     return HttpResponse("Method not allowed", status=405)
 
 
+@csrf_exempt
+def login(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        if (data.get('username')):
+            response = service.authenticate_manager(
+                data.get('username'), data.get('password'))
+            if response is None:
+                return HttpResponse("Unauthorized", status=401)
+            return HttpResponse(json.dumps({"manager": response.get('manager').userid, "token": response.get('token')}), status=200)
+        else:
+            response = service.authenticate_voter(
+                data.get('ticket_number'), data.get('flight_number'))
+            if response is None:
+                return HttpResponse("Unauthorized", status=401)
+            return HttpResponse(json.dumps({"voter": response.get('voter').userid, "token": response.get('token')}), status=200)
+
+    return HttpResponse("Method not allowed", status=405)
+
+
 def survey(request, sid):
     if request.method == "GET":
         survey_info = service.get_survey_info(sid)
@@ -54,4 +76,3 @@ def survey(request, sid):
             return HttpResponse("Survey not found", status=404)
         return HttpResponse(json.dumps(survey_info), status=200)
     return HttpResponse("Method not allowed", status=405)
-
