@@ -74,3 +74,20 @@ def get_surveys(manager_id):
     surveys = survey_repository.get_by_airline_id(airline_id)
     survey_ids = [survey.id for survey in surveys]
     return survey_ids
+
+
+@log_error
+def check_active(activation_interval):
+    return True  # todo implement it :)
+
+
+@log_error
+def add_survey(survey_info):
+    is_active = check_active(survey_info.activation_interval)
+    airline_id = survey_info.airline_id
+    airline = airline_repository.find_by_id(airline_id)
+    survey_repository.insert(
+        activation_interval=survey_info.activation_interval,
+        is_active=is_active,
+        airline=airline
+    )

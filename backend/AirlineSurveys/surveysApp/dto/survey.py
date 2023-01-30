@@ -1,7 +1,7 @@
 class SurveyInfo:
-    def __init__(self, activation_time, is_active):
+    def __init__(self, activation_time, airline_id):
         self.activation_time = activation_time
-        self.is_active = is_active
+        self.airline_id = airline_id
 
 
 class QuestionInfo:

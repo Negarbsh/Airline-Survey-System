@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
+from .dto.survey import SurveyInfo
 
 
 def index(request):
@@ -48,10 +49,18 @@ def get_manager_surveys(request, manager_id):
 
 
 def survey(request, sid):
-    if request.method == "GET":
-        survey_info = service.get_survey_info(sid)
-        if survey_info is None:
-            return HttpResponse("Survey not found", status=404)
-        return HttpResponse(json.dumps(survey_info), status=200)
-    return HttpResponse("Method not allowed", status=405)
-
+    try:
+        if request.method == "GET":
+            survey_info = service.get_survey_info(sid)
+            if survey_info is None:
+                return HttpResponse("Survey not found", status=404)
+            return HttpResponse(json.dumps(survey_info), status=200)
+        if request.method == "POST":
+            survey_id = service.add_survey(SurveyInfo(
+                activation_time=request.get('activation_time'),
+                airline_id=request.get('airline_id')
+            ))
+            return HttpResponse({"survey_id": survey_id}, status=201)
+        return HttpResponse("Method not allowed", status=405)
+    except Exception as e:
+        return HttpResponse("Error occurred: " + str(e), status=500)

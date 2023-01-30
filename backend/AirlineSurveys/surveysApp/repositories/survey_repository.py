@@ -38,3 +38,13 @@ def get_survey(survey_id):
 @log_error
 def get_by_airline_id(airline_id):
     return Survey.objects.filter(airlineid=airline_id)
+
+
+@log_error
+def insert(activation_interval, is_active, airline):
+    survey = Survey(
+        activationinterval=activation_interval,
+        isactive=is_active,
+        airlineid=airline
+    )
+    return Survey.objects.create(survey)
