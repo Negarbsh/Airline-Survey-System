@@ -49,6 +49,7 @@ def get_manager_surveys(request, manager_id):
 
 
 def survey(request, sid):
+    data = json.loads(request.body)
     try:
         if request.method == "GET":
             survey_info = service.get_survey_info(sid)
@@ -57,8 +58,8 @@ def survey(request, sid):
             return HttpResponse(json.dumps(survey_info), status=200)
         if request.method == "POST":
             survey_id = service.add_survey(SurveyInfo(
-                activation_time=request.get('activation_time'),
-                airline_id=request.get('airline_id')
+                activation_time=data.get('activation_time'),
+                airline_id=data.get('airline_id')
             ))
             return HttpResponse({"survey_id": survey_id}, status=201)
         return HttpResponse("Method not allowed", status=405)
