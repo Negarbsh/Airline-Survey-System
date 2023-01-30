@@ -1,6 +1,4 @@
 from ..models import Manager, Voter
-from ..util.decorators import log_error
-import bcrypt
 import jwt
 
 
