@@ -81,3 +81,9 @@ def get_surveys(airline_id):
 def insert_takesurvey(survey_id ,user_id , starttime) :
     survey_repository.insert_takesurvey(survey_id ,user_id , starttime)
 
+@log_error
+def insert_answers_text( voter_id , survey_id ,question_number , ans ):
+    return survey_repository.insert_answers_text( voter_id , survey_id ,question_number , ans )
+@log_error 
+def insert_choice_answer( voter_id ,  survey_id , question_number  , choice) :
+    return survey_repository.insert_choice_answer( voter_id ,  survey_id , question_number  , choice)

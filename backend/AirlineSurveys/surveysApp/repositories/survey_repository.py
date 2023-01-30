@@ -4,12 +4,38 @@ from ..util.decorators import log_error
 
 
 @log_error
-def insert_takesurvey(survey_id ,user_id , starttime)  :
+def insert_takesurvey(survey_id ,user_id , start_time)  :
     takesurvey = Takesurvey(
     voterid =   user_id, 
     surveyid = survey_id ,
-    starttime = starttime )
+    starttime = start_time )
     takesurvey.save()
+
+
+@log_error
+def insert_answers_text( voter_id , survey_id ,question_number , ans ) : 
+    answer = Answers( 
+    voterid =  voter_id, 
+    surveyid  = survey_id,
+    questionnumber  = question_number,
+    answertext = ans 
+    )
+    answer.save()
+
+
+
+@log_error
+def insert_choice_answer( voter_id ,  survey_id , question_number  , choice) : 
+    choice_answer = Chooses( 
+    voterid =  voter_id, 
+    surveyid  = survey_id , 
+    questionnumber  = question_number ,
+    choicenumber = choice 
+    )
+    choice_answer.save()
+
+
+
 
 
 @log_error

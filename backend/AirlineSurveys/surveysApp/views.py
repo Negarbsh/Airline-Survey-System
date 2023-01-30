@@ -44,10 +44,31 @@ def take_survey(request) :
     data = json.loads(request.body)
     try : 
         if request.method == "POST" :
-           service.insert_takesurvey(data.get('survey_id'), data.get('voter_id')  , current_time )
+           service.insert_takesurvey( data.get('voter_id') , data.get('survey_id') , current_time )
            return HttpResponse("Take survey added", status=201)
     except Exception as e : 
         return HttpResponse("Error occurred: " + str(e), status=500)     
+
+
+@csrf_exempt
+def answer_descriptive(request):
+    data =json.now()
+    try : 
+        if request.method == "POST" : 
+            service.insert_answers_text( data.get('voter_id') , data.get('survey_id') ,data.get('question_number') , data.get('answer') )
+            return HttpResponse("answer added ", status=201)
+    except Exception as e:
+        return HttpResponse(": " + str(e), status=500)   
+
+@csrf_exempt
+def choose_choice(request) : 
+    data = json.now( )
+    try : 
+        if request.method == "POST" : 
+            service.insert_choice_answer(data.get('voter_id') , data.get('survey_id') , data.get('question_number') , data.get(' choice'))
+            return HttpResponse("Voter added", status=201)
+    except Exception as e:
+        return HttpResponse("Error occurred: " + str(e), status=500)   
 
 
 def survey(request, sid, aid):
