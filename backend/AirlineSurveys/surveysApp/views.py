@@ -6,7 +6,6 @@ from django.views.decorators.csrf import csrf_exempt
 from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
 from .dto.survey import SurveyInfo, QuestionInfo
-from .models import Manager, Voter
 
 
 def index(request):
@@ -18,7 +17,7 @@ def passenger(request):
     data = json.loads(request.body)
     try:
         if request.method == "POST":
-            service.add_passenger(TicketInfo(data), PassengerInfo(data))
+            service.add_passenger(TicketInfo(data), PassengerInfo.get_from_request(data))
             return HttpResponse("Voter added", status=201)
 
         elif request.method == "DELETE":
@@ -29,9 +28,9 @@ def passenger(request):
             service.update_passenger(
                 voter_id=data.get('voter_id'),
                 ticket_info=TicketInfo(data),
-                passenger_info=PassengerInfo(data)
+                passenger_info=PassengerInfo.get_from_request(data)
             )
-            return HttpResponse("Voter updated", status=200)
+            return HttpResponse("Passenger updated", status=200)
 
         return HttpResponse("Method not allowed", status=405)
 
@@ -42,9 +41,7 @@ def passenger(request):
 def get_all_passengers(request, manager_id):
     if request.method == "GET":
         passengers = service.get_all_passengers(manager_id)
-        return HttpResponse({
-            "passengers": passengers
-        })
+        return HttpResponse(json.dumps(passengers, indent=2), status=200)
     return HttpResponse("Method not allowed", status=405)
 
 
@@ -68,17 +65,20 @@ def login(request):
                 data.get('username'), data.get('password'))
             if response is None:
                 return HttpResponse("Unauthorized", status=401)
-            return HttpResponse(json.dumps({"manager": response.get('manager').userid, "token": response.get('token')}), status=200)
+            return HttpResponse(json.dumps({"manager": response.get('manager').userid, "token": response.get('token')}),
+                                status=200)
         else:
             response = service.authenticate_voter(
                 data.get('ticket_number'), data.get('flight_number'))
             if response is None:
                 return HttpResponse("Unauthorized", status=401)
-            return HttpResponse(json.dumps({"voter": response.get('voter').userid, "token": response.get('token')}), status=200)
+            return HttpResponse(json.dumps({"voter": response.get('voter').userid, "token": response.get('token')}),
+                                status=200)
 
     return HttpResponse("Method not allowed", status=405)
 
 
+@csrf_exempt
 def survey(request, sid):
     data = json.loads(request.body)
     try:
@@ -98,6 +98,7 @@ def survey(request, sid):
         return HttpResponse("Error occurred: " + str(e), status=500)
 
 
+@csrf_exempt
 def question(request, surveyid, qnumber):
     data = json.loads(request.body)
     try:

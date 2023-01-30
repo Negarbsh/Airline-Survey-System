@@ -72,14 +72,15 @@ def get_all_passengers(manager_id):
         flight_tickets = ticket_repository.find_by_flight_number(flight.flightnumber)
         for ticket in flight_tickets:
             voter = voter_repository.find_by_ticket_number(ticket.ticketnumber)
-            passengers_info.append(PassengerInfo(
+            passenger_info = PassengerInfo(
                 voter_id=voter.userid,
-                voter_type=voter.vote_type,
+                voter_type=voter.type,
                 first_name=ticket.firstname,
                 last_name=ticket.lastname,
                 gender=ticket.gender,
                 passport_number=ticket.passportnumber
-            ))
+            )
+            passengers_info.append(passenger_info.toJson())
     return passengers_info
 
 
