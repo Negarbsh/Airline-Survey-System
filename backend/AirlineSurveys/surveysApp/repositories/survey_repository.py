@@ -4,41 +4,29 @@ from ..util.decorators import log_error
 
 
 @log_error
-def get_questions_by_survey_id(survey_id):
-    questions = Question.objects.filter(surveyid=survey_id)
-    questions_info = []
-    for question in questions:
-        choices = []
-        try:
-            multi_choice = Multichoicequestion.objects.get(questionid=question)
-            question_choices = Choice.objects.filter(
-                surveyid=survey_id, questionnumber=question.questionnumber)
-            for choice in question_choices:
-                choices.append({
-                    'choice_number': choice.choicenumber,
-                    'choice_text': choice.choicetext
-                })
-
-        except Exception as e:
-            pass
-        questions_info.append({
-            "question_number": question.questionnumber,
-            "question_text": question.questiontext,
-            "is_obligatory": question.isobligatory,
-            "responder_type": question.respondertype,
-            "choices": choices
-        })
-    return questions_info
-
-
-@log_error
-def get_survey(survey_id):
+def find_by_id(survey_id):
     return Survey.objects.get(surveyid=survey_id)
 
 
 @log_error
-def get_by_airline_id(airline_id):
+def find_by_airline_id(airline_id):
     return Survey.objects.filter(airlineid=airline_id)
+
+
+@log_error
+def insert_survey(activation_interval, is_active, airline):
+    survey = Survey(
+        activationinterval=activation_interval,
+        isactive=is_active,
+        airlineid=airline
+    )
+    survey.save()
+    surveys = Survey.objects.filter(
+        activationinterval=activation_interval,
+        isactive=is_active,
+        airlineid=airline
+    )
+    return surveys[len(surveys) - 1]
 
 
 @log_error
@@ -86,8 +74,7 @@ def update_question(survey_id, question_number, question_info):
         question.isobligatory = question_info.get("is_obligatory")
     if question_info.get("responder_type"):
         question.respondertype = question_info.get("responder_type")
-    question.save(update_fields=["questiontext",
-                  "isobligatory", "respondertype"])
+    question.save(update_fields=["questiontext", "isobligatory", "respondertype"])
 
     if multi is not None:
         if question_info.get("choices"):
