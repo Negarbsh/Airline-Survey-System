@@ -11,6 +11,7 @@ import jwt
 
 from datetime import datetime
 
+
 def index(request):
     return HttpResponse("Hi there :)")
 
@@ -20,7 +21,8 @@ def passenger(request):
     data = json.loads(request.body)
     try:
         if request.method == "POST":
-            service.add_passenger(TicketInfo(data), PassengerInfo.get_from_request(data))
+            service.add_passenger(TicketInfo(
+                data), PassengerInfo.get_from_request(data))
             return HttpResponse("Voter added", status=201)
 
         elif request.method == "DELETE":
@@ -39,39 +41,50 @@ def passenger(request):
 
     except Exception as e:
         return HttpResponse("Error occurred: " + str(e), status=500)
-        
+
+
 @csrf_exempt
-def take_survey(request) :
+def take_survey(request):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
     now = datetime.now()
     current_time = now.strftime("%Y-%m-%d %H:%M")
     data = json.loads(request.body)
-    try : 
-        if request.method == "POST" :
-           service.insert_takesurvey( data.get('survey_id') , data.get('voter_id') , current_time )
-           return HttpResponse("Take survey added", status=201)
-    except Exception as e : 
-        return HttpResponse("Error occurred: " + str(e), status=500)     
+    try:
+        if request.method == "POST":
+            service.insert_takesurvey(
+                data.get('survey_id'), data.get('voter_id'), current_time)
+            return HttpResponse("Take survey added", status=201)
+    except Exception as e:
+        return HttpResponse("Error occurred: " + str(e), status=500)
 
 
 @csrf_exempt
 def answer_descriptive(request):
-    data =json.loads(request.body)
-    try : 
-        if request.method == "POST" : 
-            service.insert_answers_text( data.get('voter_id') , data.get('survey_id') ,data.get('question_number') , data.get('answer') )
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
+    data = json.loads(request.body)
+    try:
+        if request.method == "POST":
+            service.insert_answers_text(data.get('voter_id'), data.get(
+                'survey_id'), data.get('question_number'), data.get('answer'))
             return HttpResponse("answer added ", status=201)
     except Exception as e:
-        return HttpResponse(": " + str(e), status=500)   
+        return HttpResponse(": " + str(e), status=500)
+
 
 @csrf_exempt
-def choose_choice(request) : 
+def choose_choice(request):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
     data = json.loads(request.body)
-    try : 
-        if request.method == "POST" : 
-            service.insert_choice_answer(data.get('voter_id') , data.get('survey_id') , data.get('question_number') , data.get('choice'))
+    try:
+        if request.method == "POST":
+            service.insert_choice_answer(data.get('voter_id'), data.get(
+                'survey_id'), data.get('question_number'), data.get('choice'))
             return HttpResponse("Voter added", status=201)
     except Exception as e:
-        return HttpResponse("Error occurred: " + str(e), status=500)   
+        return HttpResponse("Error occurred: " + str(e), status=500)
 
 
 def get_all_passengers(request, manager_id):
@@ -118,15 +131,18 @@ def login(request):
     return HttpResponse("Method not allowed", status=405)
 
 
-
 @csrf_exempt
-def get_answers_by_number(request , sid , qnum) : 
+def get_answers_by_number(request, sid, qnum):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
+
     if request.method == "GET":
-        answer = service.get_answers_by_questionnum( sid ,qnum)
-        if answer is None : 
+        answer = service.get_answers_by_questionnum(sid, qnum)
+        if answer is None:
             return HttpResponse("Question not found", status=404)
         return HttpResponse(json.dumps(answer), status=200)
     return HttpResponse("Method not allowed", status=405)
+
 
 @csrf_exempt
 def survey(request, sid):
@@ -145,6 +161,8 @@ def survey(request, sid):
 
 @csrf_exempt
 def add_survey(request):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
     try:
         if request.method == "POST":
             data = json.loads(request.body)
@@ -160,6 +178,8 @@ def add_survey(request):
 
 @csrf_exempt
 def question(request, surveyid, qnumber):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
     data = json.loads(request.body)
     try:
         if request.method == "POST":
