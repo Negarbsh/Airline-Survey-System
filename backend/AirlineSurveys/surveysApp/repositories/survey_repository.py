@@ -130,7 +130,7 @@ def delete_question(survey_id, question_number):
         surveyid=survey, questionnumber=int(question_number)).first()
 
     multi = Multichoicequestion.objects.filter(
-        surveyid=question, questionnumber=question_number).first()
+        surveyid=survey, questionnumber=question_number).first()
 
     desc = Descriptivequestion.objects.filter(
         surveyid=question, questionnumber=question_number).first()
@@ -151,12 +151,11 @@ def delete_question(survey_id, question_number):
 @log_error
 def update_question(survey_id, question_number, question_info):
     survey = Survey.objects.filter(surveyid=survey_id).first()
-
     question = Question.objects.filter(
         surveyid=survey, questionnumber=int(question_number)).first()
 
     multi = Multichoicequestion.objects.filter(
-        surveyid=question, questionnumber=int(question_number)).first()
+        surveyid=survey, questionnumber=int(question_number)).first()
 
     if question is None:
         return {"error": "Question not found"}

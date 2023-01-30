@@ -98,7 +98,7 @@ class Takesurvey(models.Model):
 
 class Question(models.Model):
     id = models.BigAutoField(primary_key=True)
-    surveyid = models.OneToOneField(Survey, models.DO_NOTHING, db_column='surveyid',to_field='surveyid')
+    surveyid = models.OneToOneField(Survey, models.CASCADE, db_column='surveyid',to_field='surveyid')
     questionnumber = models.IntegerField()
     questiontext = models.CharField(max_length=150)
     isobligatory = models.BooleanField()
@@ -113,7 +113,7 @@ class Question(models.Model):
 
 class Descriptivequestion(models.Model):
     id = models.BigAutoField(primary_key=True)
-    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    surveyid = models.OneToOneField(Question, models.CASCADE, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
 
     class Meta:
@@ -124,8 +124,8 @@ class Descriptivequestion(models.Model):
 
 class Answers(models.Model):
     id = models.BigAutoField(primary_key=True)
-    voterid = models.OneToOneField(Takesurvey, models.DO_NOTHING, db_column='voterid',to_field='voterid')
-    surveyid = models.ForeignKey(Descriptivequestion, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    voterid = models.OneToOneField(Takesurvey, models.CASCADE, db_column='voterid',to_field='voterid')
+    surveyid = models.ForeignKey(Descriptivequestion, models.CASCADE, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     answertext = models.CharField(max_length=150)
 
@@ -137,11 +137,11 @@ class Answers(models.Model):
 
 class Assistancy(models.Model):
     id = models.BigAutoField(primary_key=True)
-    mainmanagerid = models.OneToOneField(Manager, models.DO_NOTHING, db_column='mainmanagerid', to_field='userid')
-    assistantmanagerid = models.ForeignKey(Manager, models.DO_NOTHING, db_column='assistantmanagerid', related_name='+',
+    mainmanagerid = models.OneToOneField(Manager, models.CASCADE, db_column='mainmanagerid', to_field='userid')
+    assistantmanagerid = models.ForeignKey(Manager, models.CASCADE, db_column='assistantmanagerid', related_name='+',
                                            to_field='userid')
     surveyid = models.ForeignKey(
-        Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+        Survey, models.CASCADE, db_column='surveyid', to_field='surveyid')
 
     class Meta:
         managed = False
@@ -162,7 +162,7 @@ class Supervisor(models.Model):
 
 class CheckQuestion(models.Model):
     id = models.BigAutoField(primary_key=True)
-    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    surveyid = models.OneToOneField(Question, models.CASCADE, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     supervisorid = models.ForeignKey(
         Supervisor, models.CASCADE, db_column='supervisorid', to_field='userid')
@@ -177,7 +177,7 @@ class CheckQuestion(models.Model):
 
 class Multichoicequestion(models.Model):
     id = models.BigAutoField(primary_key=True)
-    surveyid = models.OneToOneField(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    surveyid = models.OneToOneField(Survey, models.CASCADE, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
 
     class Meta:
@@ -188,7 +188,7 @@ class Multichoicequestion(models.Model):
 
 class Choice(models.Model):
     id = models.BigAutoField(primary_key=True)
-    surveyid = models.OneToOneField(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    surveyid = models.OneToOneField(Survey, models.CASCADE, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     choicenumber = models.IntegerField()
     choicetext = models.CharField(max_length=150)
@@ -201,8 +201,8 @@ class Choice(models.Model):
 
 class Chooses(models.Model):
     id = models.BigAutoField(primary_key=True)
-    voterid = models.OneToOneField(Takesurvey, models.DO_NOTHING, db_column='voterid', to_field='voterid')
-    surveyid = models.ForeignKey(Choice, models.DO_NOTHING, db_column='surveyid')
+    voterid = models.OneToOneField(Takesurvey, models.CASCADE, db_column='voterid', to_field='voterid')
+    surveyid = models.ForeignKey(Choice, models.CASCADE, db_column='surveyid')
     questionnumber = models.IntegerField()
     choicenumber = models.IntegerField()
 
