@@ -83,10 +83,8 @@ def update_question(survey_id, question_number, question_info):
     if question_info.get("question_text"):
         question.questiontext = question_info.get("question_text")
     if question_info.get("is_obligatory"):
-        print(2)
         question.isobligatory = question_info.get("is_obligatory")
     if question_info.get("responder_type"):
-        print(3)
         question.respondertype = question_info.get("responder_type")
     question.save(update_fields=["questiontext",
                   "isobligatory", "respondertype"])
