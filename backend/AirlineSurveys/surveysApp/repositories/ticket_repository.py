@@ -8,7 +8,7 @@ def find_by_ticket_number(ticket_number):
 
 
 @log_error
-def find_by_flight_number(flight_number):
+def find_by_flight(flight_number):
     return Ticket.objects.filter(flightnumber=flight_number)
 
 

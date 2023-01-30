@@ -29,7 +29,7 @@ def add_passenger(ticket_info, passenger_info):
     )
 
     ticket = ticket_repository.find_by_ticket_number(ticket_info.ticket_number)
-    
+
     voter_repository.insert(
         ticket=ticket,
         flight=flight,
@@ -71,8 +71,7 @@ def get_all_passengers(manager_id):
     flights = flight_repository.find_by_airline_id(airline.airlineid)
     passengers_info = []
     for flight in flights:
-        flight_tickets = ticket_repository.find_by_flight_number(
-            flight.flightnumber)
+        flight_tickets = ticket_repository.find_by_flight(flight)
         for ticket in flight_tickets:
             voter = voter_repository.find_by_ticket_number(ticket.ticketnumber)
             passenger_info = PassengerInfo(
@@ -98,20 +97,26 @@ def get_survey_info(survey_id):
         'questions': questions
     }
 
-@log_error
-def get_answers_by_questionnum( survey_id , question_number ) :
-    return survey_repository.get_answers_by_questionnum(survey_id , question_number )
 
 @log_error
-def insert_takesurvey(survey_id ,user_id , starttime) :
-    survey_repository.insert_takesurvey(survey_id ,user_id , starttime)
+def get_answers_by_questionnum(survey_id, question_number):
+    return survey_repository.get_answers_by_questionnum(survey_id, question_number)
+
 
 @log_error
-def insert_answers_text( voter_id , survey_id ,question_number , ans ):
-    return survey_repository.insert_answers_text( voter_id , survey_id ,question_number , ans )
-@log_error 
-def insert_choice_answer( voter_id ,  survey_id , question_number  , choice) :
-    return survey_repository.insert_choice_answer( voter_id ,  survey_id , question_number  , choice)
+def insert_takesurvey(survey_id, user_id, starttime):
+    survey_repository.insert_takesurvey(survey_id, user_id, starttime)
+
+
+@log_error
+def insert_answers_text(voter_id, survey_id, question_number, ans):
+    return survey_repository.insert_answers_text(voter_id, survey_id, question_number, ans)
+
+
+@log_error
+def insert_choice_answer(voter_id,  survey_id, question_number, choice):
+    return survey_repository.insert_choice_answer(voter_id,  survey_id, question_number, choice)
+
 
 @log_error
 def get_surveys(manager_id):
@@ -152,7 +157,8 @@ def add_question(survey_id, question_number, question_info):
     )
 
     if is_multichoice:
-        question_repository.insert_multichoice_question(survey, question_number)
+        question_repository.insert_multichoice_question(
+            survey, question_number)
         for choice in question_info.choices:
             question_repository.insert_choice(
                 survey=survey,
@@ -161,7 +167,8 @@ def add_question(survey_id, question_number, question_info):
                 choice_text=choice.choice_text
             )
     else:
-        question_repository.insert_descriptive_question(survey, question_number)
+        question_repository.insert_descriptive_question(
+            survey, question_number)
 
 
 @log_error
