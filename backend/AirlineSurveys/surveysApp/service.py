@@ -100,3 +100,7 @@ def get_surveys(manager_id):
     surveys = survey_repository.get_by_airline_id(airline_id)
     survey_ids = [survey.id for survey in surveys]
     return survey_ids
+
+@log_error
+def delete_question(survey_id, question_number):
+    return survey_repository.delete_question(survey_id, question_number)

@@ -5,7 +5,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
-from .models import Manager, Voter
 
 
 def index(request):
@@ -84,4 +83,19 @@ def survey(request, sid):
         if survey_info is None:
             return HttpResponse("Survey not found", status=404)
         return HttpResponse(json.dumps(survey_info), status=200)
+    return HttpResponse("Method not allowed", status=405)
+
+
+@csrf_exempt
+def question(request, sid, qid):
+    if request.method == "DELETE":
+        response = service.delete_question(sid, qid)
+        print(f'question response: {response}')
+        if response is None or response.get('error'):
+            return HttpResponse(response.get('error'), status=404)
+
+        res = {"message": response.get('message'),
+               "survey_id": sid, "question_number": qid}
+
+        return HttpResponse(json.dumps(res), status=200)
     return HttpResponse("Method not allowed", status=405)
