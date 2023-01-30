@@ -102,6 +102,6 @@ def update_question(survey_id, question_number, question_info):
                     choice.save()
                 else:
                     Choice.objects.create(
-                        surveyid=survey, questionnumber=question_number, choicenumber=choice_number, choicetext=choice_text)
+                        surveyid=multi, questionnumber=question_number, choicenumber=choice_number, choicetext=choice_text)
 
     return {"message": "Question updated successfully", "question_number": question_number, "survey_id": survey_id}
