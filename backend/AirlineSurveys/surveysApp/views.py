@@ -37,28 +37,21 @@ def passenger(request):
         return HttpResponse("Error occurred: " + str(e), status=500)
 
 
-def survey(request, sid, aid):
+def get_manager_surveys(request, manager_id):
     if request.method == "GET":
-        survey_info = service.get_survey_info(sid, aid)
+        surveys = service.get_surveys(manager_id)
+        return HttpResponse(
+            {"survey_ids": surveys},
+            status=200
+        )
+    return HttpResponse("Method not allowed", status=405)
+
+
+def survey(request, sid):
+    if request.method == "GET":
+        survey_info = service.get_survey_info(sid)
         if survey_info is None:
             return HttpResponse("Survey not found", status=404)
         return HttpResponse(json.dumps(survey_info), status=200)
     return HttpResponse("Method not allowed", status=405)
-
-
-def get_airline_surveys(request, airline_id):
-    if request.method == "GET":
-        surveys = service.get_surveys(airline_id)
-        return HttpResponse(json.dumps(surveys), status=200)
-    return HttpResponse("Method not allowed", status=405)
-
-
-def get_question(request, sid, qnum):
-    if request.method == "GET":
-        question = service.get_question(sid, qnum)
-        if question is None:
-            return HttpResponse("Question not found", status=404)
-        return HttpResponse(json.dumps(question), status=200)
-    return HttpResponse("Method not allowed", status=405)
-
 

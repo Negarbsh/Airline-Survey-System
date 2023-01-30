@@ -4,9 +4,7 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('passenger', views.passenger, name='passenger'),
-    path('survey/<string:aid>/<string:sid>', views.survey, name='survey'),
-    path('surveys/<string:airline_id>', views.get_airline_surveys, name='get_airline_surveys'),
-    path('survey/<str:sid>/question/<int:qnum>', views.get_question, name='get_question'),
-
+    path('passenger', views.passenger, name='passenger'),  # todo add get all passengers api
+    path('survey/<str:sid>', views.survey, name='survey'),
+    path('surveys/<str:manager_id>', views.get_manager_surveys, name='get_manager_surveys'),
 ]
