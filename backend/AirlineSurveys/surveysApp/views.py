@@ -18,6 +18,9 @@ def index(request):
 
 @csrf_exempt
 def passenger(request):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
+
     data = json.loads(request.body)
     try:
         if request.method == "POST":
