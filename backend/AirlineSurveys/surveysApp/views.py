@@ -38,6 +38,15 @@ def passenger(request):
         return HttpResponse("Error occurred: " + str(e), status=500)
 
 
+def get_all_passengers(request, manager_id):
+    if request.method == "GET":
+        passengers = service.get_all_passengers(manager_id)
+        return HttpResponse({
+            "passengers": passengers
+        })
+    return HttpResponse("Method not allowed", status=405)
+
+
 def get_manager_surveys(request, manager_id):
     if request.method == "GET":
         surveys = service.get_surveys(manager_id)
