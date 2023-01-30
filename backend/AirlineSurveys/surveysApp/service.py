@@ -27,7 +27,9 @@ def add_passenger(ticket_info, passenger_info):
         gender=passenger_info.gender,
         price=ticket_info.price
     )
+
     ticket = ticket_repository.find_by_ticket_number(ticket_info.ticket_number)
+    
     voter_repository.insert(
         ticket=ticket,
         flight=flight,
@@ -96,6 +98,20 @@ def get_survey_info(survey_id):
         'questions': questions
     }
 
+@log_error
+def get_answers_by_questionnum( survey_id , question_number ) :
+    return survey_repository.get_answers_by_questionnum(survey_id , question_number )
+
+@log_error
+def insert_takesurvey(survey_id ,user_id , starttime) :
+    survey_repository.insert_takesurvey(survey_id ,user_id , starttime)
+
+@log_error
+def insert_answers_text( voter_id , survey_id ,question_number , ans ):
+    return survey_repository.insert_answers_text( voter_id , survey_id ,question_number , ans )
+@log_error 
+def insert_choice_answer( voter_id ,  survey_id , question_number  , choice) :
+    return survey_repository.insert_choice_answer( voter_id ,  survey_id , question_number  , choice)
 
 @log_error
 def get_surveys(manager_id):
