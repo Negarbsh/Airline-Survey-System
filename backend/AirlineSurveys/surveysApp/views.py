@@ -6,6 +6,8 @@ from django.views.decorators.csrf import csrf_exempt
 from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
 
+import jwt
+
 
 def index(request):
     return HttpResponse("Hi there :)")
@@ -114,3 +116,14 @@ def question_edit(request, sid, qid):
 
         return HttpResponse(json.dumps(res), status=200)
     return HttpResponse("Method not allowed", status=405)
+
+
+def jwt_auth(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    token = token.split()[-1]
+
+    try:
+        jwt.decode(token, 'secret', algorithms=['HS256'])
+        return True
+    except:
+        return False
