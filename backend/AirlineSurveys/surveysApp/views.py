@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
 from .dto.survey import SurveyInfo
+from .models import Manager, Voter
 
 
 def index(request):
@@ -38,6 +39,15 @@ def passenger(request):
         return HttpResponse("Error occurred: " + str(e), status=500)
 
 
+def get_all_passengers(request, manager_id):
+    if request.method == "GET":
+        passengers = service.get_all_passengers(manager_id)
+        return HttpResponse({
+            "passengers": passengers
+        })
+    return HttpResponse("Method not allowed", status=405)
+
+
 def get_manager_surveys(request, manager_id):
     if request.method == "GET":
         surveys = service.get_surveys(manager_id)
@@ -45,6 +55,27 @@ def get_manager_surveys(request, manager_id):
             {"survey_ids": surveys},
             status=200
         )
+    return HttpResponse("Method not allowed", status=405)
+
+
+@csrf_exempt
+def login(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        if (data.get('username')):
+            response = service.authenticate_manager(
+                data.get('username'), data.get('password'))
+            if response is None:
+                return HttpResponse("Unauthorized", status=401)
+            return HttpResponse(json.dumps({"manager": response.get('manager').userid, "token": response.get('token')}), status=200)
+        else:
+            response = service.authenticate_voter(
+                data.get('ticket_number'), data.get('flight_number'))
+            if response is None:
+                return HttpResponse("Unauthorized", status=401)
+            return HttpResponse(json.dumps({"voter": response.get('voter').userid, "token": response.get('token')}), status=200)
+
     return HttpResponse("Method not allowed", status=405)
 
 

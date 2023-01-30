@@ -1,5 +1,16 @@
-from .repositories import voter_repository, ticket_repository, flight_repository, survey_repository, airline_repository
+from .dto.passenger import PassengerInfo
+from .repositories import voter_repository, ticket_repository, flight_repository, survey_repository, airline_repository, authentication_repository
 from .util.decorators import log_error
+
+
+@log_error
+def authenticate_manager(username, password):
+    return authentication_repository.authenticate_manager(username, password)
+
+
+@log_error
+def authenticate_voter(ticket_number, flight_number):
+    return authentication_repository.authenticate_voter(ticket_number, flight_number)
 
 
 @log_error
@@ -52,8 +63,23 @@ def update_passenger(voter_id, ticket_info, passenger_info):
 
 
 @log_error
-def get_question(survey_id, question_number):
-    return survey_repository.get_question(survey_id, question_number)
+def get_all_passengers(manager_id):
+    airline = airline_repository.get_by_manager_id(manager_id)
+    flights = flight_repository.find_by_airline_id(airline.airlineid)
+    passengers_info = []
+    for flight in flights:
+        flight_tickets = ticket_repository.find_by_flight_number(flight.flightnumber)
+        for ticket in flight_tickets:
+            voter = voter_repository.find_by_ticket_number(ticket.ticketnumber)
+            passengers_info.append(PassengerInfo(
+                voter_id=voter.userid,
+                voter_type=voter.vote_type,
+                first_name=ticket.firstname,
+                last_name=ticket.lastname,
+                gender=ticket.gender,
+                passport_number=ticket.passportnumber
+            ))
+    return passengers_info
 
 
 @log_error
