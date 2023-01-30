@@ -177,7 +177,7 @@ class CheckQuestion(models.Model):
 
 class Multichoicequestion(models.Model):
     id = models.BigAutoField(primary_key=True)
-    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    surveyid = models.OneToOneField(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
 
     class Meta:
@@ -188,7 +188,7 @@ class Multichoicequestion(models.Model):
 
 class Choice(models.Model):
     id = models.BigAutoField(primary_key=True)
-    surveyid = models.OneToOneField(Multichoicequestion, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    surveyid = models.OneToOneField(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     choicenumber = models.IntegerField()
     choicetext = models.CharField(max_length=150)
