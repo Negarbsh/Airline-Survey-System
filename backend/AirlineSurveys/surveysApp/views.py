@@ -40,6 +40,8 @@ def passenger(request):
 
 
 def get_all_passengers(request, manager_id):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
     if request.method == "GET":
         passengers = service.get_all_passengers(manager_id)
         return HttpResponse({
@@ -49,6 +51,8 @@ def get_all_passengers(request, manager_id):
 
 
 def get_manager_surveys(request, manager_id):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
     if request.method == "GET":
         surveys = service.get_surveys(manager_id)
         return HttpResponse(
@@ -80,6 +84,9 @@ def login(request):
 
 
 def survey(request, sid):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
+
     if request.method == "GET":
         survey_info = service.get_survey_info(sid)
         if survey_info is None:
@@ -90,6 +97,9 @@ def survey(request, sid):
 
 @csrf_exempt
 def question_delete(request, sid, qid):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
+
     if request.method == "DELETE":
         response = service.delete_question(sid, qid)
         print(f'question response: {response}')
@@ -105,6 +115,9 @@ def question_delete(request, sid, qid):
 
 @csrf_exempt
 def question_edit(request, sid, qid):
+    if not jwt_auth(request):
+        return HttpResponse("UnAuthorized!", status=401)
+
     if request.method == "PUT":
         data = json.loads(request.body)
         response = service.update_question(sid, qid, data)
@@ -120,9 +133,11 @@ def question_edit(request, sid, qid):
 
 def jwt_auth(request):
     token = request.META.get('HTTP_AUTHORIZATION')
-    token = token.split()[-1]
+    if token is None:
+        return False
 
     try:
+        token = token.split()[-1]
         jwt.decode(token, 'secret', algorithms=['HS256'])
         return True
     except:
