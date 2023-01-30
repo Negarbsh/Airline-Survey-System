@@ -7,6 +7,8 @@ from . import service
 from .dto.passenger import TicketInfo, PassengerInfo
 from .dto.survey import SurveyInfo, QuestionInfo
 
+import jwt
+
 
 def index(request):
     return HttpResponse("Hi there :)")
@@ -127,3 +129,44 @@ def question(request, surveyid, qnumber):
 
     except Exception as e:
         return HttpResponse("Error occurred: " + str(e), status=500)
+
+
+@csrf_exempt
+def question_delete(request, sid, qid):
+    if request.method == "DELETE":
+        response = service.delete_question(sid, qid)
+        print(f'question response: {response}')
+        if response is None or response.get('error'):
+            return HttpResponse(response.get('error'), status=404)
+
+        res = {"message": response.get('message'),
+               "survey_id": sid, "question_number": qid}
+
+        return HttpResponse(json.dumps(res), status=200)
+    return HttpResponse("Method not allowed", status=405)
+
+
+@csrf_exempt
+def question_edit(request, sid, qid):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        response = service.update_question(sid, qid, data)
+        if response is None or response.get('error'):
+            return HttpResponse(response.get('error'), status=404)
+
+        res = {"message": response.get('message'),
+               "survey_id": sid, "question_number": qid}
+
+        return HttpResponse(json.dumps(res), status=200)
+    return HttpResponse("Method not allowed", status=405)
+
+
+def jwt_auth(request):
+    token = request.META.get('HTTP_AUTHORIZATION')
+    token = token.split()[-1]
+
+    try:
+        jwt.decode(token, 'secret', algorithms=['HS256'])
+        return True
+    except:
+        return False

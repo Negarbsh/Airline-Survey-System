@@ -5,10 +5,15 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('passenger', views.passenger, name='passenger'),
-    path('passengers/<str:manager_id>', views.get_all_passengers, name='get_all_passengers'),
+    path('passengers/<str:manager_id>',
+         views.get_all_passengers, name='get_all_passengers'),
     path('survey/<str:sid>', views.survey, name='survey'),
     path('survey', views.add_survey, name='add_survey'),
     path('surveys/<str:manager_id>', views.get_manager_surveys, name='get_manager_surveys'),
     path('login', views.login, name='login'),
+    path('delete_question/<str:sid>/<str:qid>',
+         views.question_delete, name='delete_question'),
+    path('edit_question/survey/<str:sid>/question/<str:qid>',
+         views.question_edit, name='edit_question'),
     path('survey/<str:surveyid>/question/<str:qnumber>', views.question, name='question')
 ]

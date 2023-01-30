@@ -69,7 +69,8 @@ def get_all_passengers(manager_id):
     flights = flight_repository.find_by_airline_id(airline.airlineid)
     passengers_info = []
     for flight in flights:
-        flight_tickets = ticket_repository.find_by_flight_number(flight.flightnumber)
+        flight_tickets = ticket_repository.find_by_flight_number(
+            flight.flightnumber)
         for ticket in flight_tickets:
             voter = voter_repository.find_by_ticket_number(ticket.ticketnumber)
             passenger_info = PassengerInfo(
@@ -145,3 +146,13 @@ def add_question(survey_id, question_number, question_info):
             )
     else:
         question_repository.insert_descriptive_question(survey, question_number)
+
+
+@log_error
+def delete_question(survey_id, question_number):
+    return survey_repository.delete_question(survey_id, question_number)
+
+
+@log_error
+def update_question(survey_id, question_number, question):
+    return survey_repository.update_question(survey_id, question_number, question)
