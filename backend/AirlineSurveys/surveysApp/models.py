@@ -77,7 +77,8 @@ class Survey(models.Model):
 
 
 class Takesurvey(models.Model):
-    voterid = models.OneToOneField(Voter, models.DO_NOTHING, db_column='voterid', primary_key=True, to_field='userid')
+    id = models.BigAutoField(primary_key=True)
+    voterid = models.OneToOneField(Voter, models.DO_NOTHING, db_column='voterid', to_field='userid')
     surveyid = models.ForeignKey(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     starttime = models.DateTimeField()
 
@@ -88,8 +89,8 @@ class Takesurvey(models.Model):
 
 
 class Question(models.Model):
-    surveyid = models.OneToOneField(Survey, models.DO_NOTHING, db_column='surveyid', primary_key=True,
-                                    to_field='surveyid')
+    id = models.BigAutoField(primary_key=True)
+    surveyid = models.OneToOneField(Survey, models.DO_NOTHING, db_column='surveyid',to_field='surveyid')
     questionnumber = models.IntegerField()
     questiontext = models.CharField(max_length=150)
     isobligatory = models.BooleanField()
@@ -102,8 +103,8 @@ class Question(models.Model):
 
 
 class Descriptivequestion(models.Model):
-    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', primary_key=True,
-                                    to_field='surveyid')
+    id = models.BigAutoField(primary_key=True)
+    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
 
     class Meta:
@@ -113,8 +114,8 @@ class Descriptivequestion(models.Model):
 
 
 class Answers(models.Model):
-    voterid = models.OneToOneField(Takesurvey, models.DO_NOTHING, db_column='voterid', primary_key=True,
-                                   to_field='voterid')
+    id = models.BigAutoField(primary_key=True)
+    voterid = models.OneToOneField(Takesurvey, models.DO_NOTHING, db_column='voterid',to_field='voterid')
     surveyid = models.ForeignKey(Descriptivequestion, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     answertext = models.CharField(max_length=150)
@@ -126,8 +127,8 @@ class Answers(models.Model):
 
 
 class Assistancy(models.Model):
-    mainmanagerid = models.OneToOneField(Manager, models.DO_NOTHING, db_column='mainmanagerid', primary_key=True,
-                                         to_field='userid')
+    id = models.BigAutoField(primary_key=True)
+    mainmanagerid = models.OneToOneField(Manager, models.DO_NOTHING, db_column='mainmanagerid', to_field='userid')
     assistantmanagerid = models.ForeignKey(Manager, models.DO_NOTHING, db_column='assistantmanagerid', related_name='+',
                                            to_field='userid')
     surveyid = models.ForeignKey(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
@@ -149,8 +150,8 @@ class Supervisor(models.Model):
 
 
 class CheckQuestion(models.Model):
-    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', primary_key=True,
-                                    to_field='surveyid')
+    id = models.BigAutoField(primary_key=True)
+    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     supervisorid = models.ForeignKey(Supervisor, models.DO_NOTHING, db_column='supervisorid', to_field='userid')
     result = models.TextField(blank=True, null=True)  # This field type is a guess.
@@ -162,8 +163,8 @@ class CheckQuestion(models.Model):
 
 
 class Multichoicequestion(models.Model):
-    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', primary_key=True,
-                                    to_field='surveyid')
+    id = models.BigAutoField(primary_key=True)
+    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
 
     class Meta:
@@ -173,8 +174,8 @@ class Multichoicequestion(models.Model):
 
 
 class Choice(models.Model):
-    surveyid = models.OneToOneField(Multichoicequestion, models.DO_NOTHING, db_column='surveyid', primary_key=True,
-                                    to_field='surveyid')
+    id = models.BigAutoField(primary_key=True)
+    surveyid = models.OneToOneField(Multichoicequestion, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     choicenumber = models.IntegerField()
     choicetext = models.CharField(max_length=150)
@@ -186,8 +187,8 @@ class Choice(models.Model):
 
 
 class Chooses(models.Model):
-    voterid = models.OneToOneField(Takesurvey, models.DO_NOTHING, db_column='voterid', primary_key=True,
-                                   to_field='voterid')
+    id = models.BigAutoField(primary_key=True)
+    voterid = models.OneToOneField(Takesurvey, models.DO_NOTHING, db_column='voterid', to_field='voterid')
     surveyid = models.ForeignKey(Choice, models.DO_NOTHING, db_column='surveyid')
     questionnumber = models.IntegerField()
     choicenumber = models.IntegerField()
