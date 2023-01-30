@@ -87,10 +87,25 @@ def survey(request, sid):
 
 
 @csrf_exempt
-def question(request, sid, qid):
+def question_delete(request, sid, qid):
     if request.method == "DELETE":
         response = service.delete_question(sid, qid)
         print(f'question response: {response}')
+        if response is None or response.get('error'):
+            return HttpResponse(response.get('error'), status=404)
+
+        res = {"message": response.get('message'),
+               "survey_id": sid, "question_number": qid}
+
+        return HttpResponse(json.dumps(res), status=200)
+    return HttpResponse("Method not allowed", status=405)
+
+
+@csrf_exempt
+def question_edit(request, sid, qid):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        response = service.update_question(sid, qid, data)
         if response is None or response.get('error'):
             return HttpResponse(response.get('error'), status=404)
 

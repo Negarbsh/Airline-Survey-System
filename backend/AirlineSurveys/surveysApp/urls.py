@@ -13,5 +13,7 @@ urlpatterns = [
          name='get_manager_surveys'),
     path('login', views.login, name='login'),
     path('delete_question/<str:sid>/<str:qid>',
-         views.question, name='delete_question'),
+         views.question_delete, name='delete_question'),
+    path('edit_question/survey/<str:sid>/question/<str:qid>',
+         views.question_edit, name='edit_question'),
 ]

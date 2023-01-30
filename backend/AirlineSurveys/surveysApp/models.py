@@ -20,7 +20,8 @@ class Manager(models.Model):
 
 class Airline(models.Model):
     airlineid = models.AutoField(primary_key=True)
-    managerid = models.ForeignKey(to=Manager, to_field='userid', on_delete=models.DO_NOTHING, db_column='managerid')
+    managerid = models.ForeignKey(
+        to=Manager, to_field='userid', on_delete=models.DO_NOTHING, db_column='managerid')
     airlinename = models.CharField(max_length=150, blank=True, null=True)
 
     class Meta:
@@ -30,7 +31,8 @@ class Airline(models.Model):
 
 class Flight(models.Model):
     flightnumber = models.AutoField(primary_key=True)
-    airlineid = models.ForeignKey(to=Airline, to_field='airlineid', on_delete=models.DO_NOTHING, db_column='airlineid')
+    airlineid = models.ForeignKey(
+        to=Airline, to_field='airlineid', on_delete=models.DO_NOTHING, db_column='airlineid')
     flightdate = models.DateTimeField()
 
     class Meta:
@@ -41,11 +43,13 @@ class Flight(models.Model):
 class Ticket(models.Model):
     ticketnumber = models.AutoField(primary_key=True)
     seatnumber = models.CharField(max_length=150)
-    flightnumber = models.ForeignKey(Flight, models.CASCADE, db_column='flightnumber', to_field='flightnumber')
+    flightnumber = models.ForeignKey(
+        Flight, models.CASCADE, db_column='flightnumber', to_field='flightnumber')
     firstname = models.CharField(max_length=150, blank=True, null=True)
     lastname = models.CharField(max_length=150, blank=True, null=True)
     passportnumber = models.CharField(max_length=150, blank=True, null=True)
-    gender = models.TextField(blank=True, null=True)  # This field type is a guess.
+    # This field type is a guess.
+    gender = models.TextField(blank=True, null=True)
     price = models.FloatField()
 
     class Meta:
@@ -55,9 +59,12 @@ class Ticket(models.Model):
 
 class Voter(models.Model):
     userid = models.AutoField(primary_key=True)
-    ticketnumber = models.ForeignKey(Ticket, models.CASCADE, db_column='ticketnumber', to_field='ticketnumber')
-    flightnumber = models.ForeignKey(Flight, models.CASCADE, db_column='flightnumber', to_field='flightnumber')
-    type = models.TextField(blank=True, null=True)  # This field type is a guess.
+    ticketnumber = models.ForeignKey(
+        Ticket, models.CASCADE, db_column='ticketnumber', to_field='ticketnumber')
+    flightnumber = models.ForeignKey(
+        Flight, models.CASCADE, db_column='flightnumber', to_field='flightnumber')
+    # This field type is a guess.
+    type = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -69,7 +76,8 @@ class Survey(models.Model):
     surveyid = models.AutoField(primary_key=True)
     activationinterval = models.DateTimeField()
     isactive = models.BooleanField()
-    airlineid = models.ForeignKey(Airline, models.DO_NOTHING, db_column='airlineid', to_field='airlineid')
+    airlineid = models.ForeignKey(
+        Airline, models.DO_NOTHING, db_column='airlineid', to_field='airlineid')
 
     class Meta:
         managed = False
@@ -77,8 +85,10 @@ class Survey(models.Model):
 
 
 class Takesurvey(models.Model):
-    voterid = models.OneToOneField(Voter, models.DO_NOTHING, db_column='voterid', primary_key=True, to_field='userid')
-    surveyid = models.ForeignKey(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    voterid = models.OneToOneField(
+        Voter, models.DO_NOTHING, db_column='voterid', primary_key=True, to_field='userid')
+    surveyid = models.ForeignKey(
+        Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
     starttime = models.DateTimeField()
 
     class Meta:
@@ -93,7 +103,8 @@ class Question(models.Model):
     questionnumber = models.IntegerField()
     questiontext = models.CharField(max_length=150)
     isobligatory = models.BooleanField()
-    respondertype = models.TextField(blank=True, null=True)  # This field type is a guess.
+    # This field type is a guess.
+    respondertype = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -115,7 +126,8 @@ class Descriptivequestion(models.Model):
 class Answers(models.Model):
     voterid = models.OneToOneField(Takesurvey, models.CASCADE, db_column='voterid', primary_key=True,
                                    to_field='voterid')
-    surveyid = models.ForeignKey(Descriptivequestion, models.CASCADE, db_column='surveyid', to_field='surveyid')
+    surveyid = models.ForeignKey(
+        Descriptivequestion, models.CASCADE, db_column='surveyid', to_field='surveyid')
     questionnumber = models.IntegerField()
     answertext = models.CharField(max_length=150)
 
@@ -130,12 +142,14 @@ class Assistancy(models.Model):
                                          to_field='userid')
     assistantmanagerid = models.ForeignKey(Manager, models.DO_NOTHING, db_column='assistantmanagerid', related_name='+',
                                            to_field='userid')
-    surveyid = models.ForeignKey(Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
+    surveyid = models.ForeignKey(
+        Survey, models.DO_NOTHING, db_column='surveyid', to_field='surveyid')
 
     class Meta:
         managed = False
         db_table = 'assistancy'
-        unique_together = (('mainmanagerid', 'assistantmanagerid', 'surveyid'),)
+        unique_together = (
+            ('mainmanagerid', 'assistantmanagerid', 'surveyid'),)
 
 
 class Supervisor(models.Model):
@@ -149,11 +163,13 @@ class Supervisor(models.Model):
 
 
 class CheckQuestion(models.Model):
-    surveyid = models.OneToOneField(Question, models.DO_NOTHING, db_column='surveyid', primary_key=True,
+    surveyid = models.OneToOneField(Question, models.CASCADE, db_column='surveyid', primary_key=True,
                                     to_field='surveyid')
     questionnumber = models.IntegerField()
-    supervisorid = models.ForeignKey(Supervisor, models.DO_NOTHING, db_column='supervisorid', to_field='userid')
-    result = models.TextField(blank=True, null=True)  # This field type is a guess.
+    supervisorid = models.ForeignKey(
+        Supervisor, models.CASCADE, db_column='supervisorid', to_field='userid')
+    # This field type is a guess.
+    result = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -195,7 +211,8 @@ class Chooses(models.Model):
     class Meta:
         managed = False
         db_table = 'chooses'
-        unique_together = (('voterid', 'surveyid', 'questionnumber', 'choicenumber'),)
+        unique_together = (
+            ('voterid', 'surveyid', 'questionnumber', 'choicenumber'),)
 
 
 class AuthGroup(models.Model):
@@ -273,7 +290,8 @@ class DjangoAdminLog(models.Model):
     object_repr = models.CharField(max_length=200)
     action_flag = models.SmallIntegerField()
     change_message = models.TextField()
-    content_type = models.ForeignKey('DjangoContentType', models.DO_NOTHING, blank=True, null=True)
+    content_type = models.ForeignKey(
+        'DjangoContentType', models.DO_NOTHING, blank=True, null=True)
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:

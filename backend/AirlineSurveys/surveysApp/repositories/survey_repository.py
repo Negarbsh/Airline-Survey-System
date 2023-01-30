@@ -65,3 +65,45 @@ def delete_question(survey_id, question_number):
         return {"error": "Question not found"}
 
     return {"message": "Question deleted successfully", "question_number": question_number, "survey_id": survey_id}
+
+
+@log_error
+def update_question(survey_id, question_number, question_info):
+    survey = Survey.objects.filter(surveyid=survey_id).first()
+
+    question = Question.objects.filter(
+        surveyid=survey, questionnumber=int(question_number)).first()
+
+    multi = Multichoicequestion.objects.filter(
+        surveyid=question, questionnumber=int(question_number)).first()
+
+    if question is None:
+        return {"error": "Question not found"}
+
+    if question_info.get("question_text"):
+        question.questiontext = question_info.get("question_text")
+    if question_info.get("is_obligatory"):
+        print(2)
+        question.isobligatory = question_info.get("is_obligatory")
+    if question_info.get("responder_type"):
+        print(3)
+        question.respondertype = question_info.get("responder_type")
+    question.save(update_fields=["questiontext",
+                  "isobligatory", "respondertype"])
+
+    if multi is not None:
+        if question_info.get("choices"):
+            choices = question_info.get("choices")
+            for choice in choices:
+                choice_number = choice.get("choice_number")
+                choice_text = choice.get("choice_text")
+                choice = Choice.objects.filter(
+                    surveyid=multi, questionnumber=question_number, choicenumber=choice_number).first()
+                if choice is not None:
+                    choice.choicetext = choice_text
+                    choice.save()
+                else:
+                    Choice.objects.create(
+                        surveyid=survey, questionnumber=question_number, choicenumber=choice_number, choicetext=choice_text)
+
+    return {"message": "Question updated successfully", "question_number": question_number, "survey_id": survey_id}
