@@ -8,6 +8,11 @@ def find_by_id(voter_id):
 
 
 @log_error
+def find_by_ticket_number(ticket_number):
+    return Voter.objects.get(ticketnumber=ticket_number)
+
+
+@log_error
 def insert(ticket, flight, voter_type):
     voter = Voter(ticketnumber=ticket, flightnumber=flight, type=voter_type)
     voter.save()

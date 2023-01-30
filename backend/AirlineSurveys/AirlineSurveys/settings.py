@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'surveysApp.apps.SurveysAppConfig',
+    'surveysApp.apps.SurveysAppConfig'
 ]
 
 MIDDLEWARE = [
@@ -77,10 +77,10 @@ WSGI_APPLICATION = 'AirlineSurveys.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'AirLine_System',
         'USER': 'postgres',
         'HOST': 'localhost',
-        'PASSWORD': 'parnianrzvp',
+        'PASSWORD': 'amirhossein123456',
     }
 }
 

@@ -1,7 +1,7 @@
 class SurveyInfo:
-    def __init__(self, activation_time, is_active):
+    def __init__(self, activation_time, airline_id):
         self.activation_time = activation_time
-        self.is_active = is_active
+        self.airline_id = airline_id
 
 
 class QuestionInfo:
@@ -10,4 +10,10 @@ class QuestionInfo:
         self.question_text = question_text
         self.is_obligatory = is_obligatory
         self.responder_type = responder_type
+        self.choices = choices
+
+    def __init__(self, request_data, choices):
+        self.question_text = request_data.get('question_text')
+        self.is_obligatory = request_data.get('is_obligatory')
+        self.responder_type = request_data.get('responder_type')
         self.choices = choices
