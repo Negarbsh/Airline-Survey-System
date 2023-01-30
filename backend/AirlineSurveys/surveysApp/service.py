@@ -1,5 +1,6 @@
 from .dto.passenger import PassengerInfo
-from .repositories import voter_repository, ticket_repository, flight_repository, survey_repository, airline_repository, authentication_repository
+from .repositories import voter_repository, ticket_repository, flight_repository, survey_repository, airline_repository, \
+    question_repository, authentication_repository
 from .util.decorators import log_error
 
 
@@ -26,7 +27,9 @@ def add_passenger(ticket_info, passenger_info):
         gender=passenger_info.gender,
         price=ticket_info.price
     )
+
     ticket = ticket_repository.find_by_ticket_number(ticket_info.ticket_number)
+    
     voter_repository.insert(
         ticket=ticket,
         flight=flight,
@@ -72,35 +75,93 @@ def get_all_passengers(manager_id):
             flight.flightnumber)
         for ticket in flight_tickets:
             voter = voter_repository.find_by_ticket_number(ticket.ticketnumber)
-            passengers_info.append(PassengerInfo(
+            passenger_info = PassengerInfo(
                 voter_id=voter.userid,
-                voter_type=voter.vote_type,
+                voter_type=voter.type,
                 first_name=ticket.firstname,
                 last_name=ticket.lastname,
                 gender=ticket.gender,
                 passport_number=ticket.passportnumber
-            ))
+            )
+            passengers_info.append(passenger_info.toJson())
     return passengers_info
 
 
 @log_error
 def get_survey_info(survey_id):
-    survey = survey_repository.get_survey(survey_id)
-    questions = survey_repository.get_questions_by_survey_id(survey_id)
+    survey = survey_repository.find_by_id(survey_id)
+    questions = question_repository.get_questions_by_survey_id(survey_id)
     return {
-        'survey_id': survey.id,
-        'activation_interval': survey.activation_interval,
-        'is_active': survey.is_active,
+        'survey_id': survey.surveyid,
+        'activation_time': str(survey.activationinterval),
+        'is_active': survey.isactive,
         'questions': questions
     }
 
+@log_error
+def get_answers_by_questionnum( survey_id , question_number ) :
+    return survey_repository.get_answers_by_questionnum(survey_id , question_number )
+
+@log_error
+def insert_takesurvey(survey_id ,user_id , starttime) :
+    survey_repository.insert_takesurvey(survey_id ,user_id , starttime)
+
+@log_error
+def insert_answers_text( voter_id , survey_id ,question_number , ans ):
+    return survey_repository.insert_answers_text( voter_id , survey_id ,question_number , ans )
+@log_error 
+def insert_choice_answer( voter_id ,  survey_id , question_number  , choice) :
+    return survey_repository.insert_choice_answer( voter_id ,  survey_id , question_number  , choice)
 
 @log_error
 def get_surveys(manager_id):
     airline_id = airline_repository.get_by_manager_id(manager_id)
-    surveys = survey_repository.get_by_airline_id(airline_id)
+    surveys = survey_repository.find_by_airline_id(airline_id)
     survey_ids = [survey.id for survey in surveys]
     return survey_ids
+
+
+@log_error
+def check_active(activation_interval):
+    return True  # todo implement it :)
+
+
+@log_error
+def add_survey(survey_info):
+    is_active = check_active(survey_info.activation_time)
+    airline_id = survey_info.airline_id
+    airline = airline_repository.find_by_id(airline_id)
+    survey = survey_repository.insert_survey(
+        activation_interval=survey_info.activation_time,
+        is_active=is_active,
+        airline=airline
+    )
+    return survey.surveyid
+
+
+@log_error
+def add_question(survey_id, question_number, question_info):
+    is_multichoice = len(question_info.choices) == 0
+    survey = survey_repository.find_by_id(survey_id)
+    question_repository.insert_question(
+        survey=survey,
+        question_number=question_number,
+        question_text=question_info.question_text,
+        is_obligatory=question_info.is_obligatory,
+        responder_type=question_info.responder_type
+    )
+
+    if is_multichoice:
+        question_repository.insert_multichoice_question(survey, question_number)
+        for choice in question_info.choices:
+            question_repository.insert_choice(
+                survey=survey,
+                question_number=question_number,
+                choice_number=choice.choice_number,
+                choice_text=choice.choice_text
+            )
+    else:
+        question_repository.insert_descriptive_question(survey, question_number)
 
 
 @log_error
