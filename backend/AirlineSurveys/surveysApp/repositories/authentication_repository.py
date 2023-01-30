@@ -8,8 +8,9 @@ def authenticate_manager(username, password):
         return None
 
     manager = Manager.objects.get(username=username)
-    if not manager:
+    if not manager or not manager.password == password:
         return None
+
     return {"token": jwt.encode({}, 'secret', algorithm='HS256'), "manager": manager}
 
 
