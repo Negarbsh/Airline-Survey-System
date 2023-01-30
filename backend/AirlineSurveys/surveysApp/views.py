@@ -80,19 +80,27 @@ def login(request):
 
 @csrf_exempt
 def survey(request, sid):
-    data = json.loads(request.body)
     try:
         if request.method == "GET":
             survey_info = service.get_survey_info(sid)
             if survey_info is None:
                 return HttpResponse("Survey not found", status=404)
-            return HttpResponse(json.dumps(survey_info), status=200)
+            return HttpResponse(json.dumps(survey_info, indent=2), status=200)
+        return HttpResponse("Method not allowed", status=405)
+    except Exception as e:
+        return HttpResponse("Error occurred: " + str(e), status=500)
+
+
+@csrf_exempt
+def add_survey(request):
+    try:
         if request.method == "POST":
+            data = json.loads(request.body)
             survey_id = service.add_survey(SurveyInfo(
                 activation_time=data.get('activation_time'),
                 airline_id=data.get('airline_id')
             ))
-            return HttpResponse({"survey_id": survey_id}, status=201)
+            return HttpResponse("Added survey with id " + str(survey_id), status=201)
         return HttpResponse("Method not allowed", status=405)
     except Exception as e:
         return HttpResponse("Error occurred: " + str(e), status=500)

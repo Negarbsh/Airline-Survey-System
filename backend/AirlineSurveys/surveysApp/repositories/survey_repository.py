@@ -1,4 +1,4 @@
-from ..models import Survey, Question, Multichoicequestion, Choice
+from ..models import Survey
 
 from ..util.decorators import log_error
 
@@ -20,4 +20,11 @@ def insert_survey(activation_interval, is_active, airline):
         isactive=is_active,
         airlineid=airline
     )
-    return Survey.objects.create(survey)
+    survey.save()
+    surveys = Survey.objects.filter(
+        activationinterval=activation_interval,
+        isactive=is_active,
+        airlineid=airline
+    )
+    return surveys[len(surveys) - 1]
+

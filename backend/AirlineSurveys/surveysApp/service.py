@@ -89,9 +89,9 @@ def get_survey_info(survey_id):
     survey = survey_repository.find_by_id(survey_id)
     questions = question_repository.get_questions_by_survey_id(survey_id)
     return {
-        'survey_id': survey.id,
-        'activation_interval': survey.activation_interval,
-        'is_active': survey.is_active,
+        'survey_id': survey.surveyid,
+        'activation_time': str(survey.activationinterval),
+        'is_active': survey.isactive,
         'questions': questions
     }
 
@@ -111,14 +111,15 @@ def check_active(activation_interval):
 
 @log_error
 def add_survey(survey_info):
-    is_active = check_active(survey_info.activation_interval)
+    is_active = check_active(survey_info.activation_time)
     airline_id = survey_info.airline_id
     airline = airline_repository.find_by_id(airline_id)
-    return survey_repository.insert_survey(
-        activation_interval=survey_info.activation_interval,
+    survey = survey_repository.insert_survey(
+        activation_interval=survey_info.activation_time,
         is_active=is_active,
         airline=airline
     )
+    return survey.surveyid
 
 
 @log_error
