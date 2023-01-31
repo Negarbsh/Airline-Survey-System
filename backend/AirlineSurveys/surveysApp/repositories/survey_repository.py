@@ -17,8 +17,10 @@ def insert_takesurvey(survey_id ,user_id , start_time)  :
 
 @log_error
 def insert_answers_text( voter_id , survey_id ,question_number , ans ) :
-    survey =   Descriptivequestion.objects.get( surveyid = survey_id , questionnumber  = question_number )
-    voter =  Takesurvey.objects.get ( voterid = voter_id) 
+    surveyyyy =  Survey.objects.get( surveyid = survey_id )
+    surveyy = Question(surveyid = surveyyyy , questionnumber  = question_number )
+    survey =   Descriptivequestion.objects.get( surveyid = surveyy, questionnumber  = question_number )
+    voter =  Takesurvey.objects.get ( voterid = voter_id, surveyid = surveyyyy) 
     answer = Answers( 
     voterid =  voter, 
     surveyid  = survey,
@@ -31,10 +33,9 @@ def insert_answers_text( voter_id , survey_id ,question_number , ans ) :
 
 @log_error
 def insert_choice_answer( voter_id ,  survey_id , question_number  , choice) : 
-    survey =   Multichoicequestion.objects.get( surveyid = survey_id , questionnumber  = question_number )
-    choicesid =  Choice.objects.get ( surveyid =survey , questionnumber  = question_number  , choicenumber  = choice  )
-    
-    voter =  Takesurvey.objects.get ( voterid = voter_id )  
+    surveyy =  Survey.objects.get( surveyid = survey_id )
+    choicesid =  Choice.objects.get ( surveyid =surveyy , questionnumber  = question_number  , choicenumber  = choice  )
+    voter =  Takesurvey.objects.get ( voterid = voter_id , surveyid = surveyy)  
     choice_answer = Chooses( 
     voterid =  voter, 
     surveyid  = choicesid , 
