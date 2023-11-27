@@ -1,1 +1,1 @@
-# DB_final_project
+# Database Design Course Final Project
